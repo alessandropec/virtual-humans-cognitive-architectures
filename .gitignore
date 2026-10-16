@@ -1,0 +1,4 @@
+**/llm_provider_api_key.yaml
+**/.venv/
+**/__pycache__/
+**/.ipynb_checkpoints/
