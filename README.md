@@ -1,6 +1,6 @@
 # AI-Powered Virtual Humans — LLM-Powered Cognitive Architectures
 
-Alessandro Emmanuel Pecora. Politecnico di Torino, October 2026.
+Alessandro Emmanuel Pecora. October 2026.
 
 Build the Python agent behind a virtual human, from a first LLM call to conversation memory, structured behaviour and tools. This course continues the previous virtual humans course and uses its ready-to-use Unity project through an API. Attending the previous course is not required.
 

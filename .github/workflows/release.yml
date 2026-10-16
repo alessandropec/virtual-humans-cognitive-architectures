@@ -23,6 +23,8 @@ jobs:
           package = next(p for p in catalogue['packages'].values() if p['tag'] == tag)
           folder = pathlib.Path(package['destination'])
           with zipfile.ZipFile('package.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+              if pathlib.Path('requirements.txt').is_file():
+                  archive.write('requirements.txt', 'requirements.txt')
               for file in sorted(folder.rglob('*')):
                   if file.is_file():
                       archive.write(file, file.as_posix())
