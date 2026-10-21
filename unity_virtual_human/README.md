@@ -5,7 +5,7 @@
 
 [Part 1](https://github.com/stevieTheTurtle/AI_powered_VH_2026-Part_1) explains the Unity character and speech pipeline in detail. It is recommended but not required. Use this course's download, even if you already downloaded Part 1: it includes the Python bridge adapted for our LangChain integration and a common **Python 3.12** environment.
 
-The five-file **Python server is in this repository**. The Release downloads contain **Camila** and the **Whisper small / Piper English speech models**. The completed **Unity project will be added after Part 1**; it is not included yet. The agent currently uses canned, stateless replies and needs no LLM account, API key or Ollama installation.
+The five-file **Python server is in this repository**. The Release downloads contain **Camila** and the **Whisper small / Piper English and Italian speech models**. The completed **Unity project will be added after Part 1**; it is not included yet. The agent currently uses canned, stateless replies and needs no LLM account, API key or Ollama installation.
 
 ## Download and run
 
@@ -26,9 +26,11 @@ course-repository/
       schemas.py
       stt.py
       tts.py
+      speech_config.json
       models/                   from the speech models ZIP
         faster-whisper-small/
         piper-voice-en_US-hfc_female-medium/
+        piper-voice-it_IT-serena-high/
 ```
 
 The completed `UnityProject/` will be added to the Unity download after Part 1. The repository itself stays small: character assets and model weights are separate Release attachments. There is **one requirements.txt**, at the course repository root.
@@ -44,6 +46,23 @@ py -3.12 -m venv .venv
 If the course environment already exists with Python 3.12, reuse it and install the updated requirements. On macOS/Linux use `python3.12 -m venv .venv` and `.venv/bin/python` in place of `.\.venv\Scripts\python.exe`.
 
 The server's first speech request loads the local models and may take a little longer. Models work on the CPU; a GPU is not required. After installing the Python packages, speech processing uses the files included in the download.
+
+## English and Italian
+
+Whisper small recognizes both English and Italian. The models download includes an English Piper voice and the Italian **Serena** voice.
+
+Edit `unity_virtual_human/PythonProject/speech_config.json`. For Italian replies and voice:
+
+```json
+{
+  "language": "it",
+  "stt_language": "auto"
+}
+```
+
+Set `language` to `en` for English (the default), or `it` for Italian. This selects both the mock reply language and the voice. The server reads the settings on every request, so saving the file applies to the next turn without restarting.
+
+With `stt_language: "auto"`, incoming speech can be English or Italian. Set it to `en` or `it` if you prefer to force recognition in one language. The reply language follows `language`, independently of the recognized input language. The JSON fields exchanged with Unity stay the same.
 
 ## The five Python files
 

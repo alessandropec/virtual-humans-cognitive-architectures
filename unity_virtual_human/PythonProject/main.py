@@ -10,7 +10,7 @@ from starlette.concurrency import run_in_threadpool
 import agent
 import stt
 import tts
-from schemas import ChatRequest, ChatResponse
+from schemas import ChatRequest, ChatResponse, load_speech_settings
 
 logger = logging.getLogger(__name__)
 MAX_AUDIO_BYTES = 20 * 1024 * 1024
@@ -21,14 +21,15 @@ app.mount("/static", StaticFiles(directory=tts.AUDIO_DIR.parent), name="static")
 
 @app.get("/")
 def status():
-    return {"status": "ok", "brain": "mock"}
+    return {"status": "ok", "brain": "mock", **load_speech_settings().model_dump()}
 
 
 async def respond(text: str, transcript: str | None = None) -> ChatResponse:
-    reply = await run_in_threadpool(agent.respond, text)
+    settings = load_speech_settings()
+    reply = await run_in_threadpool(agent.respond, text, language=settings.language)
     await run_in_threadpool(tts.cleanup)
     try:
-        audio_url = await run_in_threadpool(tts.synthesize, reply.speech_text)
+        audio_url = await run_in_threadpool(tts.synthesize, reply.speech_text, language=settings.language)
     except Exception:
         logger.exception("Speech synthesis failed; returning the text without audio")
         audio_url = None

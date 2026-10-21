@@ -1,6 +1,7 @@
 """Speech to text using the Whisper small model included in the course ZIP."""
 from functools import lru_cache
 from pathlib import Path
+from schemas import load_speech_settings
 
 MODEL_DIR = Path(__file__).resolve().parent / "models" / "faster-whisper-small"
 
@@ -15,5 +16,8 @@ def _model():
 
 def transcribe(audio_path: str | Path) -> str:
     """Read a recording and return its words. The model is loaded once, on first use."""
-    segments, _ = _model().transcribe(str(audio_path), vad_filter=True)
+    language = load_speech_settings().stt_language
+    segments, _ = _model().transcribe(
+        str(audio_path), language=None if language == "auto" else language,
+        task="transcribe", vad_filter=True)
     return " ".join(segment.text.strip() for segment in segments).strip()
