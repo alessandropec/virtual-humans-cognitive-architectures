@@ -1,0 +1,25 @@
+# Notebooks inside VS Code
+ipykernel
+notebook
+
+# Provider SDKs: Ollama, Gemini, Groq, OpenRouter (OpenAI-compatible client)
+ollama
+google-genai
+groq
+openai
+
+# Course frameworks and provider integrations
+langchain
+langgraph
+langchain-ollama
+langchain-google-genai
+langchain-groq
+langchain-openai
+
+# Structured output and the Unity bridge
+pydantic
+fastapi
+uvicorn
+
+# Local provider key configuration
+PyYAML

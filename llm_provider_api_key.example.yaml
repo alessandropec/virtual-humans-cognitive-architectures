@@ -1,0 +1,13 @@
+# Rename to llm_provider_api_key.yaml and insert your own keys. Ollama local needs no key.
+
+gemini:
+  api_key: "YOUR_GEMINI_API_KEY"
+
+groq:
+  api_key: "YOUR_GROQ_API_KEY"
+
+openrouter:
+  api_key: "YOUR_OPENROUTER_API_KEY"
+
+ollama:
+  api_key: "YOUR_OLLAMA_API_KEY"

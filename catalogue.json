@@ -1,3 +1,11 @@
 {
-  "packages": {}
+  "packages": {
+    "part-1-starter": {
+      "title": "Part 1: Virtual Humans Foundations (Stefano Calzolari)",
+      "version": "1.0.0",
+      "destination": "Part_1_Virtual_Humans",
+      "tag": "part-1-starter-v1.0.0",
+      "sha256": "f764526de59abeab7ea3eb8a8416d75e7ca38e6d2914bf22d857c31dbc5420fd"
+    }
+  }
 }

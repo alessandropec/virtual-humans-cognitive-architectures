@@ -21,9 +21,17 @@ Build the Python agent behind a virtual human: from a first LLM call to conversa
 
 The course uses the Unity project from the previous virtual humans course through a Python API. Previous attendance is not required; the focus here is the agent behind the character.
 
+## Part 1: Virtual Humans Foundations
+
+The Unity and Python starter project from [Stefano Calzolari's Part 1 course](https://github.com/stevieTheTurtle/AI_powered_VH_2026-Part_1) is available in [Part_1_Virtual_Humans/](Part_1_Virtual_Humans/). Follow that folder's guide for Unity **6000.3.26f1**, character import and the original Python **3.12** environment.
+
+[Download the starter project and Camila together](https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/part1-2026-10-21/Part_1_Project_and_Camila.zip). Camila is hosted in this repository's GitHub Releases and is not included in **Code > Download ZIP**. Speech models and Meta OVRLipSync are separate downloads.
+
+The supplied project is the Part 1 exercise template. A completed Unity scene and pipeline are required for the later integration demonstration.
+
 ## Available materials
 
-Materials will appear here as the course progresses.
+- [Part 1: Virtual Humans Foundations (Stefano Calzolari)](Part_1_Virtual_Humans/) · version 1.0.0
 
 Each released chapter includes a README with instructions, slides in PowerPoint and PDF, and notebooks or code where applicable. You can also find chapter packages under [Releases](https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases).
 
