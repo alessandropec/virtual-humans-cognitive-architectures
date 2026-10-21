@@ -2,6 +2,8 @@
 
 This guide prepares Stefano Calzolari's Unity and Python starter for the Part 1 exercises. The download contains the scripts and animations, with Camila supplied as an importable package. You still build the Unity scene and complete the marked exercises during Part 1.
 
+**Current version:** the starter is a placeholder until the completed project is available at the end of Part 1. We will update the project in this same folder. Camila is already the definitive character.
+
 ## 1. Install the software
 
 Allow about 25 GB of free space for Unity, its import cache and the project dependencies. The first Unity import can take more than ten minutes.

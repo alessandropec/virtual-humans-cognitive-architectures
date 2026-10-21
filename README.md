@@ -27,11 +27,11 @@ The Unity and Python starter project from [Stefano Calzolari's Part 1 course](ht
 
 [Download the starter project and Camila together](https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/part1-2026-10-21/Part_1_Project_and_Camila.zip). Camila is hosted in this repository's GitHub Releases and is not included in **Code > Download ZIP**. Speech models and Meta OVRLipSync are separate downloads.
 
-The supplied project is the Part 1 exercise template. A completed Unity scene and pipeline are required for the later integration demonstration.
+The current starter is a placeholder. After Part 1 ends, it will be replaced here by the completed project for the integration demonstration. Camila is already the definitive course character.
 
 ## Available materials
 
-- [Part 1: Virtual Humans Foundations (Stefano Calzolari)](Part_1_Virtual_Humans/) · version 1.0.0
+- [Part 1: Virtual Humans Foundations (Stefano Calzolari)](Part_1_Virtual_Humans/) · version 1.0.1
 
 Each released chapter includes a README with instructions, slides in PowerPoint and PDF, and notebooks or code where applicable. You can also find chapter packages under [Releases](https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases).
 

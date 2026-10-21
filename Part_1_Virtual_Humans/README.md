@@ -11,6 +11,10 @@ The character is hosted in this repository's **GitHub Releases**, rather than th
 
 Follow the [complete setup guide](SETUP.md) for installation, model downloads, server checks and troubleshooting.
 
+## Current version
+
+The starter is a **temporary placeholder**. After Part 1 ends, it will be replaced here with the completed project. **Camila is the definitive course character** and will remain the same. The folder and setup-guide links will stay in place.
+
 ## Open the Unity project
 
 1. Install Unity Hub and **Unity 6000.3.26f1**.
