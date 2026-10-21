@@ -6,7 +6,7 @@
 
 Build the Python agent behind a virtual human: from a first LLM call to conversation memory, structured behaviour and tools. The course connects psychological models of memory with the cognitive architectures used to give a virtual character continuity across interactions.
 
-This course uses material from [AI-Powered Virtual Humans, Part 1](https://github.com/stevieTheTurtle/AI_powered_VH_2026-Part_1). Taking Part 1 is recommended but not required. The character assets and Unity setup instructions are in [unity_virtual_human/](unity_virtual_human/).
+This course uses material from [AI-Powered Virtual Humans, Part 1](https://github.com/stevieTheTurtle/AI_powered_VH_2026-Part_1). Taking Part 1 is recommended but not required. The separate Unity download is linked in [unity_virtual_human/](unity_virtual_human/).
 
 ## Programme
 
