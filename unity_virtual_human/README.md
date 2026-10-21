@@ -95,6 +95,6 @@ The response has this shape:
 }
 ```
 
-`transcript` contains the recognized text for voice requests. If speech synthesis fails, the server still returns the text with `audio_url: null`. The mock deliberately has no conversation memory. The course will replace `agent.respond(text)` while preserving the Unity HTTP contract and the speech components.
+`transcript` contains the recognized text for voice requests. If speech synthesis fails, the server still returns the text with `audio_url: null`. The mock deliberately has no conversation memory. The course will replace `agent.respond(text, language="en")` while preserving the Unity HTTP contract and the speech components. When adding LangChain, use the supplied `language` in the reply prompt so the agent and voice keep the same language.
 
 Unity version: **6000.3.26f1**. Final scene-opening instructions will be added with the Unity project. Meta OVRLipSync remains a separate download under its own terms; follow Part 1 when that component is needed.
