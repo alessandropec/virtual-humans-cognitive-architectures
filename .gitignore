@@ -3,6 +3,9 @@
 **/.venv/
 **/__pycache__/
 **/.ipynb_checkpoints/
+**/PythonProject/models/*
+!**/PythonProject/models/.gitkeep
+**/PythonProject/static/
 **/[Ll]ibrary/
 **/[Tt]emp/
 **/[Oo]bj/
