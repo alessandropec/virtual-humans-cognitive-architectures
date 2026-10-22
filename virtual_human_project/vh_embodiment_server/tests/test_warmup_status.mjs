@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readWarmupStatus} from '../app/assets/warmup-status.js';
+let calls=0;
+const timeout=()=>Object.assign(new Error('signal timed out'),{name:'TimeoutError'});
+assert.deepEqual(await readWarmupStatus(async()=>{if(++calls<3)throw timeout();return {state:'ready'};}),{state:'ready'});
+assert.equal(calls,3);
+calls=0;
+await assert.rejects(readWarmupStatus(async()=>{calls++;throw timeout();}),/Check Server logs/);
+assert.equal(calls,3);
+calls=0;
+await assert.rejects(readWarmupStatus(async()=>{calls++;throw new Error('Model missing');}),/Model missing/);
+assert.equal(calls,1);
+console.log('PASS transient timeout recovery, bounded retries, real errors preserved');

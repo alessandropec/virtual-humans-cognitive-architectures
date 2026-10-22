@@ -2,7 +2,7 @@ import {listInputs,openInput} from '../app/assets/microphone.js';
 // Response behaviour and gesture deadlines, without a renderer or real waiting.
 import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
-import {Vector3} from '../app/lib/dependencies/three/build/three.core.js';
+import {Vector3,PerspectiveCamera} from '../app/lib/dependencies/three/build/three.core.js';
 let picture=null, head, now=0, timerId=0;
 const timers=new Map();
 globalThis.setTimeout=(fn,delay)=>{const id=++timerId;timers.set(id,{fn,at:now+delay});return id;};
@@ -25,7 +25,7 @@ globalThis.fetch=async()=>({ok:true,json:async()=>({gestures:[{id:'handup'},{id:
 class TalkingHead {
   constructor(){
     head=this;this.opt={};
-    this.camera={position:new Vector3(0,1,8),fov:45,matrixWorld:{elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]},updateMatrixWorld(){}};
+    this.camera=new PerspectiveCamera(45,1.25,.1,100);this.camera.position.set(0,1,8);
     this.controls={target:new Vector3(0,1,0),update(){}};
     this.audioCtx={audioWorklet:{addModule:async()=>{}},resume:async()=>{}};
     this.audioSpeechGainNode={connect(){},disconnect(){}};
@@ -44,7 +44,7 @@ class TalkingHead {
 class HeadAudio {async loadModel(){} update(){}}
 const source=readFileSync(new URL('../app/avatar.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace('export async function','async function');
 const createAvatar=new Function('TalkingHead','HeadAudio','listInputs','openInput',source+'\nreturn createAvatar;')(TalkingHead,HeadAudio,listInputs,openInput);
-const avatar=await createAvatar({});
+const avatar=await createAvatar({getBoundingClientRect:()=>({width:1000,height:800})});
 const nil={speech_text:null,emotion:null,expression:null,gesture:null,whiteboard:null};
 await avatar.receive(nil);assert.equal(avatar.getState().mood,'neutral');
 await avatar.receive({emotion:'HAPPY',expression:'wink',gesture:'handup',whiteboard:{type:'image',image_url:'/media/first.png'}});
@@ -81,6 +81,14 @@ assert.ok(head.camera.position.distanceTo(head.controls.target)>=2-1e-10);
 for(let i=0;i<100;i++)avatar.zoom(-1);
 assert.ok(head.camera.position.distanceTo(head.controls.target)<=28+1e-10);
 const before=head.controls.target.clone(),distance=head.camera.position.distanceTo(head.controls.target);
-avatar.pan(1,1);assert.ok(head.controls.target.x<before.x&&head.controls.target.y<before.y);
+avatar.pan(1,1);
+assert.deepEqual(head.controls.target,before,'Translation must keep the orbit pivot on the avatar');
+assert.ok(head.camera.view.offsetX<0&&head.camera.view.offsetY>0,'Frame follows the requested screen direction');
+head.camera.lookAt(before);head.camera.updateMatrixWorld();
+const projectedBefore=before.clone().project(head.camera);
+head.camera.position.copy(before).add(new Vector3(distance,0,0));
+head.camera.lookAt(before);head.camera.updateMatrixWorld();
+const projectedAfter=before.clone().project(head.camera);
+assert.ok(projectedBefore.distanceTo(projectedAfter)<1e-10,'Rotating after translation preserves the avatar screen position');
 assert.ok(Math.abs(head.camera.position.distanceTo(head.controls.target)-distance)<1e-10);
 console.log('PASS null keeps state, emotion persists, expressions/gestures expire after 5s, replacement cancels old timers, board and camera');

@@ -12,7 +12,7 @@ export async function createAvatar(element, initialCharacter = 'julia') {
   const events = new EventTarget();
   const emit = (name, detail) => events.dispatchEvent(new CustomEvent(name, { detail }));
   const head = new TalkingHead(element, {
-    ttsEndpoint: null, lipsyncModules: [], cameraView: 'upper', cameraZoomEnable: true, cameraPanEnable: true, modelFPS: 30,
+    ttsEndpoint: null, lipsyncModules: [], cameraView: 'upper', cameraZoomEnable: true, cameraPanEnable: false, modelFPS: 30,
     modelPixelRatio: Math.min(devicePixelRatio, 1.5), mixerGainSpeech: 1,
   });
   await head.audioCtx.audioWorklet.addModule('./lib/HeadAudio/dist/headworklet.min.mjs');
@@ -42,18 +42,48 @@ export async function createAvatar(element, initialCharacter = 'julia') {
   let changingCharacter = false;
   await head.showAvatar({ ...character, avatarMood: 'neutral' });
   if(head.controls){head.controls.minDistance=2;head.controls.maxDistance=28;head.controls.zoomSpeed=0.65;}
-  // The transparent canvas must not block whiteboard handles underneath it.
-  // OrbitControls observes background gestures; UI controls retain their own input.
+  // Frame translation lives in the projection, so orbiting keeps its avatar pivot.
+  let framing={x:0,y:0};
+  const applyFraming=()=>{
+    const {width,height}=element.getBoundingClientRect();
+    if(!width||!height)return;
+    framing.x=Math.max(-width*.42,Math.min(width*.42,framing.x));
+    framing.y=Math.max(-height*.42,Math.min(height*.42,framing.y));
+    head.camera.setViewOffset(width,height,-framing.x,-framing.y,width,height);
+  };
+  const resetFraming=()=>{framing={x:0,y:0};head.camera.clearViewOffset();};
   if (head.controls?.connect) {
-    head.controls.disconnect();
-    head.controls.connect(document.documentElement);
-    document.documentElement.style.touchAction = 'auto';
-    const keepUIInput = event => {
-      if (event.target.closest?.('button,input,select,textarea,a,header,dialog,#conversation,#playground,#screenTools')) event.stopPropagation();
-      else if (event.type === 'pointerdown' || event.type === 'wheel') head.cameraClock = null;
+    head.controls.mouseButtons.LEFT=undefined;head.controls.mouseButtons.RIGHT=0;
+    head.controls.disconnect();head.controls.connect(document.documentElement);
+    document.documentElement.style.touchAction='auto';
+    const isUI=event=>(event.type==='wheel' && event.target.closest?.('#screenTools')) ? false : event.target.closest?.('button,input,select,textarea,a,header,dialog,#conversation,#playground,#cameraControls') || (event.type!=='wheel' && event.button!==2 && event.target.closest?.('#screenTools'));
+    const inScene=event=>{const r=element.getBoundingClientRect();return event.clientX>=r.left&&event.clientX<=r.right&&event.clientY>=r.top&&event.clientY<=r.bottom;};
+    let drag=null;
+    document.body.addEventListener('pointerdown',event=>{
+      if(isUI(event)||!inScene(event)){event.stopPropagation();return;}
+      head.cameraClock=null;
+      if(event.button===0){
+        drag={id:event.pointerId,x:event.clientX,y:event.clientY,start:{...framing}};
+        document.body.setPointerCapture(event.pointerId);event.preventDefault();event.stopPropagation();
+      }
+    });
+    document.body.addEventListener('pointermove',event=>{
+      if(!drag||event.pointerId!==drag.id)return;
+      framing={x:drag.start.x+event.clientX-drag.x,y:drag.start.y+event.clientY-drag.y};applyFraming();event.stopPropagation();
+    });
+    const finish=event=>{
+      if(!drag||event.pointerId!==drag.id)return;drag=null;
+      if(document.body.hasPointerCapture(event.pointerId))document.body.releasePointerCapture(event.pointerId);
+      event.stopPropagation();
     };
-    for (const type of ['pointerdown','wheel','contextmenu']) document.body.addEventListener(type,keepUIInput);
+    document.body.addEventListener('pointerup',finish);document.body.addEventListener('pointercancel',finish);
+    for(const type of ['wheel','contextmenu'])document.body.addEventListener(type,event=>{
+      if(isUI(event)||!inScene(event))event.stopPropagation();
+      else {head.cameraClock=null;if(type==='contextmenu'){event.preventDefault();event.stopPropagation();}}
+    });
+    new ResizeObserver(applyFraming).observe(element);
   }
+
 
 
 
@@ -105,6 +135,7 @@ export async function createAvatar(element, initialCharacter = 'julia') {
     diagnostics,
     getCatalog: () => catalog,
     getCharacter: () => character.id,
+    getCharacterName: () => character.name,
     async selectCharacter(id) {
       const next = characters.find(item => item.id === id);
       if (!next) throw new Error('Unknown character');
@@ -114,7 +145,7 @@ export async function createAvatar(element, initialCharacter = 'julia') {
       const previous = character, mood = head.moodName, view = head.viewName;
       try {
         await head.showAvatar({...next, avatarMood:mood});
-        character = next; head.setView(view);
+        character = next; resetFraming(); head.setView(view);
       } catch(error) {
         await head.showAvatar({...previous, avatarMood:mood}); head.setView(view);
         throw error;
@@ -166,7 +197,7 @@ export async function createAvatar(element, initialCharacter = 'julia') {
     getState: () => ({ ...motions, character:character.id, mood: head.moodName, view: head.viewName,
       speaking: !!head.isAudioPlaying, recording: starting || recorder?.state === 'recording', whiteboard }),
     setMood: mood => head.setMood(mood.toLowerCase()),
-    setView(view) { head.setView(view); document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view))); },
+    setView(view) { resetFraming();head.setView(view); document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view))); },
     zoom(direction) {
       head.cameraClock = null;
       const offset = head.camera.position.clone().sub(head.controls.target);
@@ -177,12 +208,8 @@ export async function createAvatar(element, initialCharacter = 'julia') {
     },
     pan(x, y) {
       head.cameraClock = null;
-      const camera = head.camera, target = head.controls.target;
-      const step = camera.position.distanceTo(target) * Math.tan(camera.fov*Math.PI/360) * 0.12;
-      camera.updateMatrixWorld();
-      const m = camera.matrixWorld.elements;
-      const delta = camera.position.clone().set(-step*(x*m[0]+y*m[4]),-step*(x*m[1]+y*m[5]),-step*(x*m[2]+y*m[6]));
-      camera.position.add(delta); target.add(delta); head.controls.update();
+      const {width,height}=element.getBoundingClientRect();
+      framing.x+=x*width*.06;framing.y-=y*height*.06;applyFraming();
     },
     lookAtCamera: (milliseconds = 2000) => head.lookAtCamera(milliseconds),
     reset() { api.stopMotion(); head.setMood('neutral'); },
@@ -213,7 +240,7 @@ export async function createAvatar(element, initialCharacter = 'julia') {
       if (!text) throw new Error('Type a message');
       emit('text', { text });
     },
-    async receive({ speech_text = '', audio_url = null, emotion = null, expression = null, gesture = null, whiteboard: board = null }) {
+    async receive({ diagnostics: responseStats = null, speech_text = '', audio_url = null, emotion = null, expression = null, gesture = null, whiteboard: board = null }) {
       const version = ++responseVersion;
       // Load the next picture before replacing the previous one.
       let image;
@@ -231,7 +258,7 @@ export async function createAvatar(element, initialCharacter = 'julia') {
         document.querySelector('#studioScreen').replaceChildren(...(image ? [image] : []));
         whiteboard = {...board};
       }
-      emit('response', { speech_text, audio_url, emotion, gesture });
+      emit('response', { diagnostics: responseStats, speech_text, audio_url, emotion, expression, gesture });
       if (audio_url) await api.playAudio(audio_url);
     },
     listMicrophones: listInputs,

@@ -24,7 +24,6 @@ sys.path.insert(0, str(ROOT / 'build/common'))
 from downloads import read_json
 from install import model_plan, VOICE_SOURCES
 from files import application_files
-from render_docs import render
 from build_icons import build as build_icons
 
 def metadata(requirement):
@@ -60,7 +59,6 @@ def write(archive, name, data, mode=0o644):
 
 def build():
     build_icons()
-    render()
     out = ROOT / 'dist/mac'
     out.mkdir(exist_ok=True)
     for name in ('build/mac/src/mac_install.py', 'build/mac/src/mac_launch.py', 'build/mac/build.py'):
@@ -121,7 +119,6 @@ def build():
         write(archive, prefix + 'MacOS/Install', b'#!/bin/bash\nHERE="$(cd "$(dirname "$0")/../Resources" && pwd)"\nexec /usr/bin/open -a Terminal "$HERE/Install.command"\n', 0o755)
         write(archive, prefix + 'Resources/Install.command', (ROOT / 'build/mac/src/bootstrap.command').read_bytes(), 0o755)
         write(archive, prefix + 'Resources/payload.zip', buffer.getvalue())
-        write(archive, 'README.html', (ROOT / 'README.html').read_bytes())
     with zipfile.ZipFile(installer) as archive:
         assert archive.testzip() is None
         for name in (prefix + 'MacOS/Install', prefix + 'Resources/Install.command'):

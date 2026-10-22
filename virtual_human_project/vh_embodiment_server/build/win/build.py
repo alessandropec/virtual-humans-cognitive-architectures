@@ -16,7 +16,6 @@ os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'build/common'))
 from files import application_files
-from render_docs import render
 from build_icons import build as build_icons
 
 APP = ROOT / 'app'
@@ -34,7 +33,6 @@ def build(output):
 
 def build_package(output, work):
     build_icons()
-    render()
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     print('[1/5] Controlli Python, download, dispositivi e contratto API', flush=True)

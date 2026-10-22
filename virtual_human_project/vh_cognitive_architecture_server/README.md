@@ -1,81 +1,65 @@
 # VH Cognitive Architecture Server
 
-`GET /heartbeat` reports server availability without calling the LLM. The embodiment can check it and launch or stop this Python server from **Settings > Cognitive Architecture Server**. **Test cognitive API** also checks the selected response function.
+This server is the avatar's decision-making component. It receives the user's text from VH Embodiment Server, passes it to your Python agent and sends the reply back. The embodiment handles speech and avatar animation.
 
-The course agent: it receives text from the embodiment, calls the LLM provider and returns reply JSON.
+**The public repository starts with the mock agent selected.** It answers every message with **"Hello world"**, without an LLM or API key. This fixed answer confirms that the two servers are connected; it is the starting point for programming your own agent.
 
-**This server will be introduced, used and developed during the course. Follow the slides for environment setup, API keys and the example to use at each stage.**
+## Install and start
 
-## Setup once
+Run the [shared installer](../vh_embodiment_server/README.md#installation) first. Both servers and the notebooks use `virtual_human_project/.venv-vh-course`.
 
-Run the [embodiment installer](../vh_embodiment_server/README.md#installation). It creates or completes **`virtual_human_project/.venv-vh-course`** for both servers and the course notebooks, and connects the server paths automatically. Select that environment as the notebook kernel too. No second environment is needed.
+Open VH Embodiment Server. In **Settings > Cognitive Architecture Server**, use automatic start or **Start Cognitive Architecture Server**. Setup fills in the server and Python paths. Restart the cognitive server after changing agent code.
 
-For manual setup only, from the repository root:
+Send any message in the chat: the default mock agent replies **"Hello world"**. You can now edit its reply or choose another agent below.
 
-```powershell
-# Windows
-py -3.12 -m venv virtual_human_project/.venv-vh-course
-virtual_human_project/.venv-vh-course/Scripts/python.exe -m pip install -r virtual_human_project/requirements.txt
-```
+## Choose one agent
 
-```bash
-# Mac
-python3.12 -m venv virtual_human_project/.venv-vh-course
-virtual_human_project/.venv-vh-course/bin/python -m pip install -r virtual_human_project/requirements.txt
-```
+Start by editing [agents/mock_agent.py](agents/mock_agent.py), for example by changing its fixed phrase. Agent code lives in `agents/`; the server connection is already implemented.
 
-Create the environment only if it is missing. If setup reports an incompatible environment, rename or remove that folder and rerun the installer.
-
-## Start
-
-The **mock agent is selected by default** and needs no provider or API key. For the LLM examples, keep `llm_provider_api_key.yaml` in this folder; copy the example file and enter your key for a fresh checkout.
-
-- **Windows:** open `start.cmd`.
-- **Mac:** from the repository root, run `virtual_human_project/.venv-vh-course/bin/python virtual_human_project/vh_cognitive_architecture_server/vh_cognitive_server.py`.
-
-Keep the terminal open. In the embodiment, set **Settings > Cognitive Architecture Server** to `http://127.0.0.1:8000/agent`. API docs: http://127.0.0.1:8000/docs.
-
-To launch from the embodiment instead, use **Browse server folder** to select this folder and **Browse course .venv-vh-course** to select the shared environment. The app fills in `vh_cognitive_server.py` and the correct Python executable. Enable automatic start or click **Start Cognitive Architecture Server**. The selected interpreter is always used; there is no fallback to another Python.
-
-## Basic examples
-
-| File | Example |
-| --- | --- |
-| `agents/mock_agent.py` | Fixed "Hello world" reply; no LLM or key |
-| `agents/naive_agent.py` | Direct Ollama SDK call; fills `speech_text` |
-| `agents/langchain_basic_agent.py` | Basic LangChain call; fills `speech_text` |
-| `agents/langchain_structured_agent.py` | LangChain structured output; returns an avatar reply |
-| `schemas.py` | The cognitive server's own output schema, catalog and descriptions for the LLM |
-
-**Leave the HTTP server unchanged during the exercises.** To select an agent, change only its response import in `vh_cognitive_server.py`, for example:
+To select a different agent, open [vh_cognitive_server.py](vh_cognitive_server.py) and keep exactly one response import active:
 
 ```python
 from agents.mock_agent import response
-# from agents.naive_agent import response
-# from agents.langchain_basic_agent import response
-# from agents.langchain_structured_agent import response
 ```
 
-Keep exactly one import active. Every version exposes `response(text) -> AgentReply` and fills only the available fields. The server simply returns that reply.
+Replace that line with the module you want to run:
 
-The reply has five simple fields:
+| Module | Behaviour |
+| --- | --- |
+| `agents.mock_agent` | Fixed reply, no LLM or key |
+| `agents.naive_agent` | Direct provider SDK call |
+| `agents.langchain_basic_agent` | Basic LangChain call |
+| `agents.langchain_structured_agent` | Structured avatar reply through LangChain |
 
-```json
-{
-  "speech_text": "Hello world",
-  "emotion": "HAPPY",
-  "expression": "😉",
-  "gesture": "handup",
-  "whiteboard": null
-}
+For an LLM example, copy `llm_provider_api_key.example.yaml` to `llm_provider_api_key.yaml` in this folder and enter the provider key required by that example. Keep the key file local.
+
+After editing or switching an agent, use **Stop Cognitive Architecture Server**, then **Start Cognitive Architecture Server** in the app Settings. Send another message to try the change.
+
+Leave the HTTP routes unchanged. Each agent exposes the same function:
+
+```python
+from schemas import AgentReply
+
+
+def response(text: str) -> AgentReply:
+    return AgentReply(
+        speech_text="Hello!",
+        emotion="HAPPY",
+        expression=None,
+        gesture="handup",
+        whiteboard=None,
+    )
 ```
 
-The catalog is listed directly in `schemas.py`. `ModelReply` contains the four fields generated by the LLM. The program builds `AgentReply` by adding `whiteboard`, currently always `null`. This is the same reply received by the embodiment, not a separate whiteboard API. Use the Playground to test image updates and clear.
+The local `schemas.py` defines the reply and the available behaviours. In the structured example, `ModelReply` contains the fields generated by the LLM; your program adds `whiteboard` when constructing `AgentReply`.
 
-Null leaves the current channel unchanged. Omitted fields also work. Expressions and gestures last 5 seconds.
+See the [reply fields and catalog](../vh_embodiment_server/README.md#api-reference) for null values, behaviour duration and whiteboard updates.
 
-Both `/agent` and `/chat` receive `{"text":"Hello"}` and return the selected agent's `AgentReply`. These examples have no conversation memory yet. Later course versions belong in `agents/`.
+<details>
+<summary>Troubleshooting</summary>
 
-The response schema and catalog are in the [embodiment guide](../vh_embodiment_server/README.md#api-reference). The [project overview](../README.md) shows the complete infrastructure.
+- **Missing key or provider error:** check the selected agent import, its model setting and this folder's key file. Use the mock agent to test the connection independently.
+- **Server does not start:** open **Server logs > Cognitive** in the embodiment. Check the server file and course Python paths in Settings.
+- **Code changes have no effect:** stop and restart the cognitive server.
 
-Closing the avatar tab also stops this server when connected locally, even if started separately. A remote server is left running. Heartbeats stay active without filling the request log.
+</details>

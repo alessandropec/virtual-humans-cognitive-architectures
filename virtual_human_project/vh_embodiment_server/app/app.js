@@ -1,3 +1,4 @@
+import { readWarmupStatus } from './assets/warmup-status.js';
 import { setupControlPanels } from './assets/control-panels.js';
 import { setupAPIPlayground } from './assets/api-playground.js';
 import { createAvatar } from './avatar.js';
@@ -32,18 +33,21 @@ const report = error => { console.error(error); status.textContent = error.messa
 const safe = callback => async (...args) => { try { await callback(...args); } catch (error) { report(error); } };
 
 function blockLoading(text) {
-  const dialog=$('#modelLoading');
   blockingLoads++;
-  $('#modelLoadingText').textContent=text;
-  if(!dialog.open)dialog.showModal();
+  status.textContent=text;status.classList.add('is-loading');
   let released=false;
   return ()=>{
     if(released)return;
     released=true;blockingLoads--;
-    if(blockingLoads===0 && dialog.open)dialog.close();
+    if(blockingLoads===0){status.classList.remove('is-loading');if(status.textContent===text)status.textContent=busy?'Working...':'Ready';}
   };
 }
-$('#modelLoading').addEventListener('cancel',event=>event.preventDefault());
+new MutationObserver(()=>{
+  $('#messages').scrollTop=$('#messages').scrollHeight;
+}).observe(status,{childList:true,characterData:true,subtree:true});
+new MutationObserver(()=>{
+  $('#chatSpeechEnabled').disabled=$('#speechEnabled').disabled;
+}).observe($('#speechEnabled'),{attributes:true,attributeFilter:['disabled']});
 let logPanel='embodiment', logTimer=null;
 async function refreshLogs(){
   if(!$('#serverLogs').open)return;
@@ -69,6 +73,7 @@ function loading(selector, active, text) {
 }
 
 function refreshControls() {
+  $('#chatSpeechEnabled').disabled=$('#speechEnabled').disabled;
   const recording = avatar?.getState().recording || preparingMicrophone;
   $('#character').disabled = !avatar || (busy || warmingModels) || recording;
   playground?.setAvailable(Boolean(avatar && apiConnected && !busy && !warmingModels && !needsSpeechChoice && !recording));
@@ -86,11 +91,21 @@ function refreshControls() {
 }
 function setBusy(value) { busy = value; $('#conversation').setAttribute('aria-busy',String(value)); refreshControls(); }
 function connectionLabel() {
-  $('#connection').textContent = !apiConnected ? 'Avatar API disconnected' : config.agent_enabled === false ? 'Agent connection disabled' : agentStatus?.connected ? 'Cognitive Architecture Server connected' : 'Configure the Cognitive Architecture Server in Settings to connect.';
+  const label=$('#connection');
+  let state='connecting',text='Connecting to the avatar server...';
+  if(apiConnected) {
+    if(config.agent_enabled===false){state='disabled';text='Cognitive Architecture Server disabled';}
+    else if(agentStatus?.connected){state='connected';text='Cognitive Architecture Server connected';}
+    else if(!config.agent_url){state='disabled';text='Configure the Cognitive Architecture Server in Settings';}
+    else {text='Connecting to the Cognitive Architecture Server...';}
+  }
+  label.dataset.state=state;label.textContent=text;
+  label.title=agentStatus?.message||text;
 }
+
 async function warmModels() {
   if(warmupPromise)return warmupPromise;
-  const cached=await request('/api/models/warmup',undefined,'GET',5000);
+  const cached=await readWarmupStatus(request);
   if(cached.state==='ready'){
     withoutSpeechModels=false;needsSpeechChoice=false;$('#speechModelsNotice').hidden=true;refreshControls();return;
   }
@@ -105,12 +120,11 @@ async function warmModels() {
       let result=cached;
       do {
         if(result.state!=='loading')break;
-        $('#modelLoadingText').textContent=result.message;
         $('#status').textContent=result.message;
         $('#settingsMessage').textContent=result.message;
         if(Date.now()>deadline)throw new Error('Model warmup is taking too long. Check the server log and Settings.');
         await new Promise(resolve=>setTimeout(resolve,300));
-        result=await request('/api/models/warmup',undefined,'GET',5000);
+        result=await readWarmupStatus(request);
       } while(true);
       needsSpeechChoice=Boolean(result.missing);
       $('#speechModelsNotice').hidden=!needsSpeechChoice;
@@ -168,9 +182,9 @@ async function refreshInstalledModels() {
 }
 function message(role, text) {
   const item = document.createElement('div'); item.className = `message ${role}`;
-  const label = document.createElement('strong'); label.textContent = role === 'user' ? 'You' : 'Avatar';
+  const label = document.createElement('strong'); label.textContent = role === 'user' ? 'You' : avatar.getCharacterName();
   const content = document.createElement('p'); content.textContent = text;
-  item.append(label, content); $('#messages').append(item); $('#messages').scrollTop = $('#messages').scrollHeight;
+  item.append(label, content); $('#messages').insertBefore(item,$('.chat-status')); $('#messages').scrollTop = $('#messages').scrollHeight;
   return content;
 }
 function clearPending() {pendingLine?.remove();pendingLine=null;pendingLabel=null;}
@@ -181,11 +195,11 @@ function showPending(text) {
     const spinner=document.createElement('span');spinner.className='spinner';spinner.setAttribute('aria-hidden','true');
     pendingLabel=document.createElement('span');content.append(spinner,pendingLabel);
   }
-  pendingLabel.textContent=text; status.textContent=text;$('#messages').scrollTop=$('#messages').scrollHeight;
+  pendingLabel.textContent=text; status.textContent='';$('#messages').scrollTop=$('#messages').scrollHeight;
 }
 function applySpeechMode() {
   const enabled=config.speech_enabled!==false;
-  $('#speechEnabled').checked=enabled; avatar?.setSpeechEnabled(enabled);
+  $('#speechEnabled').checked=enabled; $('#chatSpeechEnabled').checked=enabled; avatar?.setSpeechEnabled(enabled);
   refreshControls();
 }
 async function request(url, body, method = 'POST', timeout = 0) {
@@ -225,12 +239,38 @@ async function refreshMicrophones(permission = false) {
   })();
   try {await microphoneRefresh;} finally {microphoneRefresh=null;}
 }
+function messageInfo(line) {
+  let info=line.parentElement.querySelector('.message-info');
+  if(!info){
+    const menu=document.createElement('details'),summary=document.createElement('summary');
+    menu.className='message-menu';summary.textContent='\u2699';summary.title='Message details';summary.setAttribute('aria-label','Message details');
+    info=document.createElement('div');info.className='message-info';menu.append(summary,info);line.parentElement.append(menu);
+  }
+  return info;
+}
+const retainedAudio=[];
+function retainAudio(player,url,size=0){
+  retainedAudio.push({player,url,size});
+  while(retainedAudio.length>20 || retainedAudio.reduce((sum,item)=>sum+item.size,0)>64*1024*1024){
+    const old=retainedAudio.shift();old.player.pause();old.player.removeAttribute('src');old.player.load();
+    const note=document.createElement('p');note.textContent='Recording expired';old.player.replaceWith(note);
+    if(recordingURLs.delete(old.url))URL.revokeObjectURL(old.url);
+  }
+}
+function statsRows(container, entries){
+  const list=document.createElement('dl');list.className='stats';
+  for(const [key,value] of entries){if(value==null)continue;const k=document.createElement('dt'),v=document.createElement('dd');k.textContent=key;v.textContent=value;list.append(k,v);}
+  container.append(list);
+}
+function micLabel(recording){
+  $('#mic').textContent='';$('#mic').title=recording?'Stop recording and send':'Start microphone';$('#mic').setAttribute('aria-label',$('#mic').title);
+}
 function addRecording(line, audio) {
   const details=document.createElement('details'), summary=document.createElement('summary'), player=document.createElement('audio');
   summary.textContent='Replay recording'; player.controls=true;
-  const url=URL.createObjectURL(audio); recordingURLs.add(url); player.src=url;
+  const url=URL.createObjectURL(audio); recordingURLs.add(url); player.src=url;player.preload='none';retainAudio(player,url,audio.size);
   player.addEventListener('play',()=>avatar.stop());
-  details.append(summary,player); line.parentElement.append(details);
+  details.append(summary,player); messageInfo(line).append(details);
 }
 async function transcribeLive(recording,audio) {
   const data=new FormData();data.append('audio',audio,'preview');
@@ -309,7 +349,7 @@ function showDiagnostics(line, stats) {
   if(stats.fallback_reason)parts.push('CPU fallback: '+stats.fallback_reason);
   if(stats.model)parts.push(`Whisper ${stats.model}`);
   if(stats.trimmed_start_seconds!=null) parts.push(`silence trimmed: ${stats.trimmed_start_seconds}s start / ${stats.trimmed_end_seconds}s end`);
-  note.textContent=parts.join(' · '); line.parentElement.append(note);
+  statsRows(messageInfo(line),[['Model',stats.model],['Device',stats.device],['Transcription',stats.processing_seconds!=null?stats.processing_seconds+' s':null],['Audio',stats.duration_seconds!=null?stats.duration_seconds+' s':null],['Level',stats.rms_dbfs!=null?stats.rms_dbfs+' dBFS':null]]);
 }
 window.addEventListener('pagehide',()=>{for(const url of recordingURLs) URL.revokeObjectURL(url);});
 async function finishTurn(result) {
@@ -340,7 +380,7 @@ function connectAPI() {
         case 'receive': await avatar.receive(args); break;
         case 'gesture': await avatar.gesture(args.gesture); break;
         case 'expression': avatar.expression(args.expression); break;
-        case 'character': await avatar.selectCharacter(args.character); config.character=args.character; $('#character').value=args.character; break;
+        case 'character': await avatar.selectCharacter(args.character); config.character=args.character;$('#avatarName').textContent=avatar.getCharacterName(); $('#character').value=args.character; break;
         case 'motion-stop': avatar.stopMotion(args.track); break;
         case 'reset': avatar.reset(); break;
         case 'mood': avatar.setMood(args.mood); break;
@@ -363,8 +403,9 @@ $('#settings').addEventListener('leave-microphone',stopMicrophoneTest);
 $('#settings').addEventListener('close',stopMicrophoneTest);
 $('#clearConversation').addEventListener('click',safe(()=>{
   if(busy || avatar?.getState().recording)return;
-  avatar.stop();clearPending();$('#messages').replaceChildren();$('#text').value='';
+  avatar.stop();clearPending();$('#messages').replaceChildren($('.chat-status'));$('#text').value='';
   for(const url of recordingURLs)URL.revokeObjectURL(url);
+  for(const item of retainedAudio){item.player.pause();item.player.removeAttribute('src');item.player.load();}retainedAudio.length=0;
   recordingURLs.clear();status.textContent='Conversation cleared';
   request('/api/conversation/clear',{}).catch(error=>console.warn('Remote reset failed:',error.message));
 }));
@@ -409,17 +450,18 @@ async function saveTranscriptionSettings() {
 $('#liveTranscription').addEventListener('change',saveTranscriptionSettings);
 $('#sttModel').addEventListener('change',saveTranscriptionSettings);
 $('#sttDevice').addEventListener('change',saveTranscriptionSettings);
-$('#speechEnabled').addEventListener('change',safe(async(event)=>{
+async function saveSpeechMode(event){
   const finishUpdate=blockLoading('Preparing speech settings...');
   const previous=config.speech_enabled!==false,enabled=event.target.checked;
-  $('#speechEnabled').disabled=true;avatar?.setSpeechEnabled(enabled);
+  $('#speechEnabled').disabled=true;$('#chatSpeechEnabled').disabled=true;avatar?.setSpeechEnabled(enabled);
   $('#saveSettings').disabled=true;
   try {
     config=await request('/api/settings',{...config,speech_enabled:enabled},'PUT');
     applySpeechMode();$('#settingsMessage').textContent=enabled?'Speech enabled':'Speech disabled';await warmModels();
-  } catch(error) {avatar?.setSpeechEnabled(previous);$('#speechEnabled').checked=previous;throw error;}
-  finally {finishUpdate();$('#speechEnabled').disabled=false;$('#saveSettings').disabled=false;}
-}));
+  } catch(error) {avatar?.setSpeechEnabled(previous);applySpeechMode();throw error;}
+  finally {finishUpdate();$('#chatSpeechEnabled').disabled=false;$('#speechEnabled').disabled=false;$('#saveSettings').disabled=false;}
+}
+for(const id of ['speechEnabled','chatSpeechEnabled']) $('#'+id).addEventListener('change',safe(saveSpeechMode));
 
 for(const [id,kind,target] of [['browseCognitive','cognitive','agentScript'],['browsePython','python','agentPython'],['browseModels','models','modelsDir']]) {
   $('#'+id).addEventListener('click',async()=>{
@@ -482,14 +524,14 @@ try {
   finally { loading('#status',false); }
   const catalog=avatar.getCatalog();
   $('#character').replaceChildren(...catalog.characters.map(item=>new Option(item.name,item.id)));
-  $('#character').value=avatar.getCharacter();
+  $('#character').value=avatar.getCharacter();$('#avatarName').textContent=avatar.getCharacterName();
   playground=await setupAPIPlayground({request,setBusy});
   $('#character').addEventListener('change',safe(async()=>{
     const finishLoading=blockLoading('Loading character and warming up its voice...');
     setBusy(true); loading('#characterStatus',true,'Loading character…');
     try { await request('/api/avatar',{character:$('#character').value}); config.character=avatar.getCharacter();await warmModels(); $('#characterStatus').textContent='Character ready. The voice now matches the character.'; }
     catch(error) { $('#characterStatus').textContent=error.message; throw error; }
-    finally { finishLoading();loading('#characterStatus',false); $('#character').value=avatar.getCharacter();setBusy(false); }
+    finally { finishLoading();loading('#characterStatus',false); $('#character').value=avatar.getCharacter();$('#avatarName').textContent=avatar.getCharacterName();setBusy(false); }
   }));
   $('#screenEnabled').checked=localStorage.getItem('virtual-human-v2-screen')!=='false';
   $('#studioScreen').hidden=!$('#screenEnabled').checked;
@@ -547,7 +589,13 @@ try {
       if(recording===liveRecording && recording.active)status.textContent='Listening… preview unavailable; transcription will run on send';
     } finally {recording.inflight=null;recording.lastPreview=performance.now();}
   });
-  avatar.on('response',({speech_text,emotion})=>{void refreshVoiceDevice();clearPending();if(speech_text) message('avatar',speech_text);});
+  avatar.on('response',reply=>{void refreshVoiceDevice();clearPending();if(reply.speech_text){
+    const line=message('avatar',reply.speech_text),note=document.createElement('p');
+    const d=reply.diagnostics||{};
+    statsRows(messageInfo(line),[['Voice model',d.model],['Device',d.device],['Speech generation',d.processing_seconds!=null?d.processing_seconds+' s':null],['Agent model',d.agent_seconds!=null?'Not reported by server':null],['Agent / LLM request',d.agent_seconds!=null?d.agent_seconds+' s':null]]);
+    if(reply.audio_url){const player=document.createElement('audio');player.controls=true;player.preload='none';player.src=reply.audio_url;messageInfo(line).append(player);retainAudio(player,reply.audio_url);}
+
+  }});
   avatar.on('playback',playing=>{if(playing) status.textContent='Avatar is speaking'; else if(!busy) status.textContent='Ready';});
   avatar.on('recording',recording=>{
     if(recording) {
@@ -555,7 +603,7 @@ try {
       if(config.live_transcription!==false)line.parentElement.classList.add('draft');
       liveRecording={id:crypto.randomUUID(),line,active:true,inflight:false,lastPreview:performance.now()};
     }
-    $('#mic').textContent=recording?'Stop & send':'Microphone'; $('#mic').setAttribute('aria-pressed',String(recording));
+    micLabel(recording); $('#mic').setAttribute('aria-pressed',String(recording));
     status.textContent=recording?'Listening…':'Audio recorded'; refreshControls();
     $('#liveLevel').hidden=!recording;
   });
@@ -579,7 +627,7 @@ try {
         await avatar.startMicrophone(selectedMicrophone);
       }
     }
-    finally {finishPreparation();loading('#mic',false);loading('#status',false);preparingMicrophone=false;$('#mic').textContent=avatar.getState().recording?'Stop & send':'Microphone';refreshControls();}
+    finally {finishPreparation();loading('#mic',false);loading('#status',false);preparingMicrophone=false;micLabel(avatar.getState().recording);refreshControls();}
   }));
   $('#settings').addEventListener('enter-microphone',()=>$('#refreshMicrophones').click());
   $('#refreshMicrophones').addEventListener('click',safe(async()=>{
@@ -609,3 +657,5 @@ try {
   $('#resetCamera').addEventListener('click',safe(()=>avatar.setView(avatar.getState().view)));
   $('#stop').addEventListener('click',()=>avatar.stop());
 } catch(error) {report(error);} finally {finishStartup();}
+
+micLabel(false);

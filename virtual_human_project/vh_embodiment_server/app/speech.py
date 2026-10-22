@@ -106,6 +106,7 @@ def synthesize(text, settings, output_dir):
     import tts_device
     local = settings.model_copy(update={'models_dir': str(models_path(settings))})
     tts_device.synthesize(text, str(voice_path(local)), target, settings)
+    tts_device.last_run['model'] = voice_path(local).stem
     return '/media/' + target.name
 
 

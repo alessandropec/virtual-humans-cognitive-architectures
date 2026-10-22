@@ -20,6 +20,7 @@ from starlette.concurrency import run_in_threadpool
 from pydantic import ValidationError
 import speech
 from cognitive_connection import CognitiveConnection
+import time
 import tts_device
 import server_logs
 from path_picker import select_path
@@ -33,7 +34,6 @@ from schemas import (AudioFile, AvatarState, CommandResult, GestureRequest, Inpu
                      CharacterRequest, MotionStopRequest)
 
 ROOT = Path(__file__).resolve().parent
-DOCS = ROOT if (ROOT / 'README.html').exists() or (ROOT / 'README.md').exists() else ROOT.parent
 CATALOG = json.loads((ROOT / 'assets/motion-catalog.json').read_text(encoding='utf-8'))
 SERVER_PORT = int(os.environ.get('VH_PORT', '8899'))
 mimetypes.add_type('text/javascript', '.mjs')
@@ -157,26 +157,6 @@ def index():
 MODEL_API_PATHS = {'/api/speak', '/api/catalog', '/api/status', '/api/whiteboard/images', '/api/audio', '/api/stop'}
 
 
-@app.get('/model-api', include_in_schema=False)
-def model_api_page():
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse('/readme#api-reference')
-
-
-@app.get('/model-api.md', include_in_schema=False)
-def model_api_text():
-    if (DOCS / 'README.md').exists():
-        return FileResponse(DOCS / 'README.md', media_type='text/plain')
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse('/readme#api-reference')
-
-
-@app.get('/readme', include_in_schema=False)
-def readme():
-    guide = DOCS / 'README.html'
-    return FileResponse(guide) if guide.exists() else FileResponse(ROOT / 'README.md', media_type='text/plain')
-
-
 @app.get('/model-openapi.json', include_in_schema=False)
 def model_openapi():
     from fastapi.openapi.utils import get_openapi
@@ -283,7 +263,15 @@ async def render_reply(request: SpeakRequest, settings: Settings):
     except Exception as exc:
         logger.exception('TTS failed')
         raise HTTPException(503, 'Speech generation failed.') from exc
-    return request.model_copy(update={'audio_url': url})
+    stats = dict(tts_device.last_run)
+    # Bound generated audio on disk; input uploads and board images are separate.
+    files = sorted(MEDIA.glob('*.wav'), key=lambda path: path.stat().st_mtime, reverse=True)
+    total = 0
+    for index, path in enumerate(files):
+        total += path.stat().st_size
+        if index >= 20 or (total > 64 * 1024 * 1024 and index > 0):
+            path.unlink(missing_ok=True)
+    return request.model_copy(update={'audio_url': url, 'diagnostics': stats})
 
 
 def validate_reply(reply):
@@ -302,6 +290,7 @@ async def ask_agent(text: str, settings: Settings):
         trace('AGENT', {'status': 'not configured', 'text': text})
         return ChatResult(text=text)
     await progress('Agent is writing…')
+    agent_started = time.perf_counter()
     trace('AVATAR -> AGENT', {'text': text})
     try:
         async with httpx.AsyncClient(timeout=60, follow_redirects=False) as http:
@@ -313,7 +302,9 @@ async def ask_agent(text: str, settings: Settings):
     except (httpx.HTTPError, ValueError, ValidationError) as exc:
         logger.warning('Agent response failed: %s', exc)
         raise HTTPException(502, 'Agent API unavailable or invalid response. Check the URL and schema in /docs.') from exc
+    agent_seconds = round(time.perf_counter() - agent_started, 3)
     rendered = await render_reply(SpeakRequest(**reply.model_dump(exclude_none=True)), settings)
+    rendered = rendered.model_copy(update={'diagnostics': {**(rendered.diagnostics or {}), 'agent_seconds': agent_seconds}})
     trace('AVATAR -> BROWSER', rendered.model_dump())
     return ChatResult(text=text, reply=rendered)
 

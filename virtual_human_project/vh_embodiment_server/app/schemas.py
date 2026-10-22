@@ -34,6 +34,7 @@ class AgentReply(Schema):
     whiteboard: Annotated[BoardImage | BoardClear, Field(discriminator='type')] | None = None
 
 class SpeakRequest(AgentReply):
+    diagnostics: dict[str, float | str] | None = None
     audio_url: str | None = None
 
 

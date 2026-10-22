@@ -10,7 +10,6 @@ def application_files(platform):
         'app.js', 'avatar.js', 'chat-window.js', 'index.html', 'server.py',
         'schemas.py', 'speech.py', 'stt_device.py', 'tts_device.py',
         'model_files.py', 'cognitive_connection.py', 'path_picker.py', 'model_warmup.py', 'project_paths.py', 'server_logs.py')]
-    files += [(ROOT / name, name) for name in ('README.html',)]
     files += [(ROOT / 'build/common' / name, name) for name in ('install.py', 'verify_install.py', 'downloads.py', 'course_environment.py', 'speech-models.json')]
     if platform == 'win':
         files += [(APP / 'start.cmd', 'start.cmd')]
@@ -26,5 +25,7 @@ def application_files(platform):
     for directory in ('assets', 'lib'):
         files += [(file, file.relative_to(APP).as_posix())
                   for file in sorted((APP / directory).rglob('*'))
-                  if file.is_file() and '__pycache__' not in file.parts]
+                  if file.is_file() and '__pycache__' not in file.parts
+                  and file.suffix.lower() not in {'.pyc', '.log', '.map'}
+                  and (file.suffix.lower() != '.md' or file.stem.lower().startswith(('license', 'notice', 'copying')))]
     return files

@@ -24,11 +24,9 @@
     .glass{background:rgba(17,28,44,.88);border:1px solid #536b8255;box-shadow:0 18px 60px #0004;backdrop-filter:blur(18px)}
     #conversation{position:fixed;left:24px;top:50%;width:min(720px,calc(100% - 24px));height:280px;border-radius:18px;padding:12px 16px 18px;display:flex;flex-direction:column;max-width:calc(100% - 24px);max-height:calc(100dvh - 24px)}
     .chat-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-shrink:0} .chat-top strong{font-size:12px;letter-spacing:.04em;color:#d3e1f1}
-    #chatDrag{flex:1;min-width:0;cursor:grab;touch-action:none;user-select:none;padding:8px 0} #chatDrag:active{cursor:grabbing}.chat-actions{display:flex;gap:4px}.chat-actions button{padding:5px 8px;font-size:16px;line-height:1.2}
     .chat-status{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-shrink:0} #status{margin:0;font-size:12px;color:#a9c5d2;overflow-wrap:anywhere} #messages{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
-    #resizeChat{position:absolute;right:2px;bottom:1px;padding:0 5px;border:0;background:none;color:#aac6dd;cursor:nwse-resize;touch-action:none;font-size:18px;line-height:18px} .dock-hint{outline:2px solid #86dfc3}
     .message.pending{color:#afc2d9}.pending-content{display:flex;align-items:center;gap:8px}.spinner{display:inline-block;width:13px;height:13px;border:2px solid #9ac9ff44;border-top-color:#9ac9ff;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}.is-loading::before{content:"";display:inline-block;width:13px;height:13px;margin-right:8px;vertical-align:middle;border:2px solid #9ac9ff44;border-top-color:#9ac9ff;border-radius:50%;animation:spin .8s linear infinite} @keyframes spin{to{transform:rotate(360deg)}}
-    @media(prefers-reduced-motion:reduce){.spinner,.is-loading::before{animation:none}}
+    @media(prefers-reduced-motion:reduce){.spinner,.is-loading::before{animation:none}#messages{scroll-behavior:auto!important}}
     #messages:empty::before{content:'Type a message or use the microphone.';display:block;font-size:13px;color:#a6b8cc;padding:8px 0 14px}
     .message{padding:7px 0 10px;border-top:1px solid #b8d4ee16}.message strong{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#9dc8ff}.message.avatar strong{color:#88e2c5}
     .message p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.45}
@@ -52,41 +50,102 @@
     details.settings-group{border-bottom:1px solid #3d526866;padding:0 0 18px;margin-top:18px} .settings-group>summary{font-size:15px;font-weight:600;color:#eef4ff;padding:6px 0}.settings-group h3{font-size:13px}.switch{display:flex;align-items:center;gap:9px;font-size:14px;color:#eef4ff}.switch input{width:18px;height:18px;accent-color:#86dfc3}.drawer-footer{padding:10px 0 22px}
     meter{display:block;width:100%;height:18px;margin:8px 0} meter[hidden]{display:none} #liveLevel{width:60px;height:14px;margin:0} .message details{margin-top:6px} .message audio{display:block;max-width:100%;height:32px;margin-top:8px} .message .note{margin-top:5px}
     @media(max-width:620px){header{top:16px;left:18px;right:18px} #conversation{padding:10px 12px 18px} #chat{flex-wrap:wrap} #text{flex-basis:60%} #mic{font-size:13px;padding:10px}.chat-top strong{font-size:11px}}
-    #modelLoading{width:min(420px,85vw);padding:36px;border:1px solid #638899;border-radius:20px;background:linear-gradient(145deg,#172c40,#102130);color:#eef6ff;text-align:center;box-shadow:0 24px 90px #0008}
-    #modelLoading::backdrop{background:#06101dcc;backdrop-filter:blur(7px)}
-    #modelLoading .spinner{width:42px;height:42px;border-width:4px;margin:0 auto 18px}
-    #modelLoading h2{margin:0 0 12px;font-size:23px}#modelLoading p{margin:0;color:#bcd1df;line-height:1.6}
+
+    :root{--chat-width:380px;--scene-left:404px}
+    #conversation{left:12px;top:88px;bottom:12px;width:var(--chat-width);height:auto;max-height:none;border-radius:18px;padding:16px;overflow:hidden}
+    #avatar{left:var(--scene-left);top:88px;overflow:hidden}
+    #studio{clip-path:inset(88px 0 0 var(--scene-left))}
+    #screenTools{pointer-events:auto;cursor:grab;touch-action:none}#screenTools:active{cursor:grabbing}
+    #screenDrag{pointer-events:auto!important;opacity:.65}#screenTools:hover #screenDrag{opacity:1}
+    .chat-top{padding-bottom:12px;border-bottom:1px solid #b8d4ee16;margin-bottom:8px}.chat-top>strong{font-size:14px;text-transform:none;letter-spacing:0}
+    #messages{display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;padding:4px 2px 12px}
+    .chat-status{order:1;margin:0;padding:6px 3px;min-height:24px}#status{font-size:11px;color:#99adbf}
+    .message{position:relative;flex-shrink:0;padding:12px;border:1px solid #b8d4ee12;border-radius:12px;background:#ffffff04}
+    .message.user{background:#77aaff09}.message p{font-size:14px;line-height:1.55}.message>strong{display:block;padding-right:30px}
+    .message-menu{position:static;margin:0!important}.message-menu>summary{position:absolute;right:8px;top:8px;list-style:none;border-radius:7px;padding:2px 7px;font-size:17px;color:#a8bacb}.message-menu>summary::-webkit-details-marker{display:none}.message-menu>summary:hover{background:#ffffff12}
+    .message-menu[open]{padding-top:8px}.message-menu[open] .message-info{padding-top:8px;border-top:1px solid #ffffff15}.message-info p{font-size:12px;color:#aabed4}
+    .chat-voice{margin:2px 0 10px;font-size:12px;color:#aebfd0}.chat-voice input{width:16px;height:16px}
+    #chat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:0}#text{grid-column:1/-1;width:100%;padding:13px 14px;border-radius:12px;background:#0c1726;border-color:#526a8055}
+    #send,#mic{min-height:40px;border-radius:10px;font-size:13px;padding:9px 14px}#send{grid-column:2;grid-row:2;min-width:78px}#mic{grid-column:1;grid-row:2;text-align:left;background:#ffffff08;border-color:#526a8055}#mic[aria-pressed=true]{background:#793d4a;border-color:#dc8392}
+    #cameraControls{min-width:280px;padding:14px;gap:10px;border-radius:16px;max-width:calc(100vw - var(--scene-left) - 24px)}.camera-heading{display:flex;justify-content:space-between;align-items:center}.camera-heading strong{font-size:14px}.camera-heading span{flex:0!important;font-size:11px!important}
+    #cameraControls [data-view]{flex:1}#cameraControls button{border-color:#7891a533;background:#ffffff08;border-radius:8px;min-width:32px}#cameraControls button[aria-pressed=true]{border-color:#88e2c566}#cameraControls p{font-size:10px;line-height:1.5}
+    body.api-mode #avatar{left:12px}body.api-mode #studio{clip-path:inset(88px 0 0 0)}
+    @media(max-width:760px){header{flex-wrap:wrap;gap:6px;top:10px}header h1{font-size:14px}header .row{gap:4px}header button{padding:5px 8px}#conversation{top:104px;padding:10px;bottom:8px;left:8px}#avatar{top:104px}#cameraControls{min-width:0;padding:8px;gap:6px;right:8px;bottom:8px}#cameraControls button{padding:6px;font-size:10px;min-width:26px}#cameraControls p{display:none}.message{padding:9px}.message p{font-size:12px}#send,#mic{padding:8px;font-size:11px}.chat-top>strong{font-size:12px}}
+    .chat-actions{display:flex;gap:4px}.chat-actions button{padding:5px 8px;font-size:11px;background:transparent;border-color:#7891a533;color:#aebfd0}
+    #send::after{content:' \2197';font-size:15px}#mic:not(.is-loading)::before{content:'\25CF';display:inline-block;font-size:10px;color:#88e2c5;margin-right:8px}#mic[aria-pressed=true]::before{color:#ffb7c1}
+
+    header{align-items:center;top:16px;padding-bottom:12px;border-bottom:1px solid #7891a522}header h1{font-size:17px}header>.row{flex-wrap:nowrap;gap:4px}header>.row button{flex:none;font-size:12px;padding:7px 10px;background:transparent;border-color:transparent}header>.row button:hover{background:#ffffff0b}
+    .chat-actions{align-items:center;gap:10px}.chat-voice{margin:0;font-size:11px;white-space:nowrap;gap:5px}.chat-actions button{font-size:16px}
+    .chat-status{flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:12px}.pending-content{justify-content:center}.message.pending{background:none;border:0;text-align:center}.message.pending>strong{display:none}#liveLevel{width:110px}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:11px;margin:8px 0}.stats dt{color:#91a9bd}.stats dd{margin:0;text-align:right;overflow-wrap:anywhere}
+    #mic{font-size:0!important;text-align:center;min-width:48px}#mic:not(.is-loading)::before{content:'';width:20px;height:20px;margin:0;background:currentColor;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9 5a3 3 0 016 0v7a3 3 0 01-6 0zm-3 6h2v1a4 4 0 008 0v-1h2v1a6 6 0 01-5 5.92V21h-2v-3.08A6 6 0 016 12z'/%3E%3C/svg%3E") center/contain no-repeat}#mic[aria-pressed=true]::before{mask:none;background:linear-gradient(to right,currentColor 35%,transparent 35%,transparent 65%,currentColor 65%);width:14px;height:16px}
+    #cameraControls{display:block;min-width:0;margin:0}#cameraControls:not([open])>*:not(summary){display:none}#cameraControls>summary{list-style:none;font-size:12px;color:#dce8f3}#cameraControls[open]{width:290px}#cameraControls[open]>summary{margin-bottom:12px}#cameraControls .camera-row{margin-top:10px}
+
+    #cameraControls{padding:0;overflow:hidden;border-radius:14px;width:150px;min-width:0}
+    #cameraControls[open]{width:280px;padding:0 14px 12px}
+    #cameraControls>summary{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:12px 14px;cursor:pointer;user-select:none}
+    #cameraControls>summary::-webkit-details-marker{display:none}
+    #cameraControls>summary:hover{background:#ffffff08}
+    #cameraControls[open]>summary{margin:0 -14px 12px;border-bottom:1px solid #7891a533}
+    #cameraControls .camera-toggle-label{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:11px;color:#88e2c5}
+    #cameraControls:not([open]) .camera-close-label,#cameraControls[open] .camera-open-label{display:none}
+    #cameraControls .camera-heading{margin-bottom:12px}
+    #cameraControls .camera-row{display:grid;grid-template-columns:1fr repeat(3,38px);gap:6px;margin-top:10px}
+    #cameraControls .camera-row:has([data-view]){grid-template-columns:1fr 1.3fr 1fr}
+    #cameraControls .camera-row:has([data-pan]){grid-template-columns:1fr repeat(4,32px)}
+    #cameraControls button{height:32px;min-width:0;padding:4px;font-size:11px}
+    #cameraControls p{margin:12px 0 0;line-height:1.6;color:#91a9bd}
+
+    #cameraControls:not([open]){width:205px}
+    .settings-tabs .playground-link{display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.5}
+    .settings-tabs .playground-link svg{flex:0 0 16px}
+    .settings-tabs button{line-height:1.45;overflow-wrap:break-word}
+    .settings-content{min-width:0}
+    .settings-panel>button{display:block;margin-top:12px;margin-bottom:16px;max-width:100%}
+    .settings-panel>.row{margin-top:12px;gap:10px}
+    .settings-panel>.row>button{flex:1 1 160px;min-width:0;line-height:1.45}
+    .settings-panel input[type=text]{display:block;width:100%;padding:10px 11px;background:#0c1726;color:inherit;border:1px solid #4e637b;border-radius:8px}
+    .settings-panel label{margin-top:18px}.settings-panel .switch{line-height:1.5}.settings-panel .switch input{flex-shrink:0}
+    .settings-panel pre{overflow-wrap:anywhere}.settings-panel .note{margin:10px 0 16px}
+
+    #connection{display:flex;align-items:center;gap:7px;min-height:18px}
+    #connection::before{content:'';width:6px;height:6px;border-radius:50%;background:#8395a6;flex:none}
+    #connection[data-state=connecting]::before{background:#ef8585;animation:connection-pulse 1.2s ease-in-out infinite}
+    #connection[data-state=connected]::before{background:#88e2c5}
+    @keyframes connection-pulse{50%{opacity:.3}}
+    @media(prefers-reduced-motion:reduce){#connection[data-state=connecting]::before{animation:none}}
+    #cameraControls .camera-toggle-label{line-height:16px;white-space:nowrap}
+    #cameraControls .camera-toggle-label svg{display:block;flex:0 0 16px;align-self:center;transform:translateY(1px)}
   </style>
   <script type="importmap">{"imports":{"three":"./lib/dependencies/three/build/three.module.js","three/addons/":"./lib/dependencies/three/examples/jsm/"}}</script>
 </head>
 <body>
   <dialog id="serverLogs" style="width:min(1000px,90vw);background:#122335;color:#eaf4ff;border:1px solid #557184;border-radius:14px;padding:24px"><div class="row"><button id="logEmbodiment">Embodiment</button><button id="logCognitive">Cognitive</button><button id="closeLogs">Close</button></div><h3 id="logTitle">Embodiment Server</h3><pre id="logOutput" style="height:55vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px" aria-live="off"></pre></dialog>
-  <dialog id="modelLoading" aria-labelledby="modelLoadingTitle" aria-describedby="modelLoadingText"><span class="spinner" aria-hidden="true"></span><h2 id="modelLoadingTitle">Getting ready</h2><p id="modelLoadingText" role="status" aria-live="polite">Loading avatar and speech models...</p></dialog>
   <div id="studio"><div id="studioScreen" role="img" aria-label="Whiteboard"></div></div>
   <div id="screenTools" role="group" aria-label="Whiteboard controls"><button id="screenDrag" aria-label="Move whiteboard" title="Drag to move the whiteboard, or use the arrow keys">Move whiteboard</button><button id="screenResize" aria-label="Resize whiteboard" title="Drag to resize, or use the arrow keys">&#9698;</button></div>
   <div id="avatar" aria-label="Avatar 3D"></div>
   <header>
-    <div><h1><img src="/assets/branding/vh-icon.svg" width="28" height="28" alt="" style="vertical-align:middle;margin-right:8px">VH Embodiment Server</h1><p id="connection">Loading avatar…</p></div>
+    <div><h1><img src="/assets/branding/vh-icon.svg" width="28" height="28" alt="" style="vertical-align:middle;margin-right:8px">VH Embodiment Server</h1><p id="connection" data-state="connecting" role="status">Connecting to the avatar server...</p></div>
     <div class="row"><button id="openPlayground" aria-controls="playground" aria-expanded="false">API Playground</button><button id="openLogs">Server logs</button><button id="openSettings" aria-controls="settings">Settings</button></div>
   </header>
   <section id="conversation" class="glass" aria-label="Conversation">
-    <div class="chat-top"><div id="chatDrag" role="button" tabindex="0" aria-label="Move chat" title="Drag to move; dock near the left edge"><strong>⠿ CONVERSATION</strong></div><div class="chat-actions"><button id="clearConversation" aria-label="Clear conversation" title="Clear conversation" disabled><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg></button><button id="dockChat" aria-label="Dock left" title="Dock left" aria-pressed="false">⇤</button><button id="expandChat" aria-label="Expand or collapse chat" title="Expand or collapse chat" aria-pressed="false">⛶</button><button id="resetChat" aria-label="Reset chat layout" title="Reset chat layout">↺</button></div></div>
-    <div class="chat-status"><meter id="liveLevel" min="0" max="100" value="0" aria-label="Microphone level" hidden></meter><p id="status" role="status">Loading…</p></div>
+    <div class="chat-top"><strong>Conversation</strong><div class="chat-actions"><label class="switch chat-voice"><input id="chatSpeechEnabled" type="checkbox" checked disabled> Use voice</label><button id="clearConversation" aria-label="Clear conversation" title="Clear chat" disabled>&#128465;</button></div></div>
     <div id="speechModelsNotice" class="note" hidden><p id="speechModelsMessage" style="white-space:pre-line;overflow-wrap:anywhere" role="alert"></p><div class="row"><button id="selectSpeechModels" type="button">Select models folder</button><button id="skipSpeechModels" type="button">Continue without speech models</button></div></div>
-    <div id="messages" role="log" aria-label="Messages" aria-live="polite"></div>
+    <div id="messages" role="log" aria-label="Messages" aria-live="polite"><div class="chat-status"><meter id="liveLevel" min="0" max="100" value="0" aria-label="Microphone level" hidden></meter><p id="status" role="status">Loading...</p></div></div>
+
     <form id="chat"><input type="text" id="text" maxlength="8000" placeholder="Type a message…" aria-label="Message" required disabled><button id="send" type="submit" disabled>Send</button><button id="mic" type="button" aria-pressed="false" disabled>Microphone</button></form>
-    <button id="resizeChat" type="button" aria-label="Resize chat" title="Drag to resize, or use the arrow keys">◢</button>
+
   </section>
   <dialog id="settings" aria-labelledby="settingsTitle">
     <div class="modal-head"><div><p class="eyebrow">CONFIGURATION</p><h2 id="settingsTitle">Settings</h2></div><button id="closeSettings" aria-label="Close settings">✕</button></div>
-    <div class="settings-layout"><nav class="settings-tabs" role="tablist" aria-label="Settings categories" aria-orientation="vertical"><button id="tab-character" role="tab" aria-controls="characterGroup" aria-selected="false" tabindex="-1" data-settings-tab="character">Avatar & scene</button><button id="tab-microphone" role="tab" aria-controls="microphoneGroup" aria-selected="false" tabindex="-1" data-settings-tab="microphone">Microphone</button><button id="tab-voice" role="tab" aria-controls="voiceGroup" aria-selected="false" tabindex="-1" data-settings-tab="voice">Voice</button><button id="tab-agent" role="tab" aria-controls="agentGroup" aria-selected="false" tabindex="-1" data-settings-tab="agent">Cognitive Architecture Server</button><button id="tab-advanced" role="tab" aria-controls="advancedGroup" aria-selected="false" tabindex="-1" data-settings-tab="advanced">Models & API</button><button id="settingsToPlayground" class="playground-link">Open API Playground ↗</button></nav>
+    <div class="settings-layout"><nav class="settings-tabs" role="tablist" aria-label="Settings categories" aria-orientation="vertical"><button id="tab-character" role="tab" aria-controls="characterGroup" aria-selected="false" tabindex="-1" data-settings-tab="character">Avatar & scene</button><button id="tab-microphone" role="tab" aria-controls="microphoneGroup" aria-selected="false" tabindex="-1" data-settings-tab="microphone">Microphone and transcription</button><button id="tab-voice" role="tab" aria-controls="voiceGroup" aria-selected="false" tabindex="-1" data-settings-tab="voice">Voice</button><button id="tab-agent" role="tab" aria-controls="agentGroup" aria-selected="false" tabindex="-1" data-settings-tab="agent">Cognitive Architecture Server</button><button id="tab-advanced" role="tab" aria-controls="advancedGroup" aria-selected="false" tabindex="-1" data-settings-tab="advanced">Models & API</button><button id="settingsToPlayground" class="playground-link"><span>Open API Playground</span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></button></nav>
     <div class="settings-content"><section id="characterGroup" class="settings-panel" role="tabpanel" aria-labelledby="tab-character" hidden>
       <h3>Avatar & scene</h3>
       <label for="character">Character</label><select id="character" disabled></select>
       <p class="note" id="characterStatus" role="status">The voice automatically matches the character: Julia (female) or David (male).</p>
-      <label class="switch"><input type="checkbox" id="screenEnabled" checked> Show whiteboard</label><p class="note">Drag the whiteboard handle to move it or the bottom-right corner to resize it. The whiteboard and both handles stay behind the avatar. The layout is saved locally.</p><button id="resetScreen">Reset whiteboard layout</button>
+      <label class="switch"><input type="checkbox" id="screenEnabled" checked> Show whiteboard</label><p class="note">Drag anywhere on the whiteboard to move it or the bottom-right corner to resize it. The whiteboard and both handles stay behind the avatar. The layout is saved locally.</p><button id="resetScreen">Reset whiteboard layout</button>
     </section><section id="microphoneGroup" class="settings-panel" role="tabpanel" aria-labelledby="tab-microphone" hidden>
-      <h3>Microphone & transcription</h3>
+      <h3>Microphone and transcription</h3>
       <label for="microphone">Input device</label><select id="microphone"><option value="">System default</option></select>
       <div class="row" style="margin-top:10px"><button id="refreshMicrophones">Refresh devices</button><button id="testMicrophone">Test level</button></div>
       <meter id="microphoneLevel" min="0" max="100" value="0" aria-label="Selected microphone level"></meter>
@@ -155,15 +214,14 @@
       </fieldset></form>
       <p id="apiFeedback" class="note api-feedback" role="status">Waiting for the avatar connection…</p><pre id="apiResult" aria-label="API response" hidden></pre>
       <details><summary>Available catalog</summary><p class="note">Options are loaded from <a href="/api/catalog" target="_blank" rel="noreferrer">GET /api/catalog</a>. One gesture at a time, alongside emotion and expression.</p><div id="apiCatalog"></div></details>
-      <p class="note"><a href="/model-api" target="_blank" rel="noreferrer">API reference ↗</a> · <a href="/readme" target="_blank" rel="noreferrer">Installation & user guide ↗</a></p>
     </div>
   </section>
-  <nav id="cameraControls" class="glass" aria-label="Avatar camera controls">
+  <details id="cameraControls" class="glass" aria-label="Avatar camera controls"><summary title="Open or close camera controls"><span>Camera setting</span><span class="camera-toggle-label camera-open-label">Open <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></span><span class="camera-toggle-label camera-close-label">Close <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary><div class="camera-heading"><strong id="avatarName">Julia</strong></div>
     <div class="camera-row"><button data-view="head" aria-pressed="false">Face</button><button data-view="upper" aria-pressed="true">Upper body</button><button data-view="full" aria-pressed="false">Full body</button></div>
     <div class="camera-row"><span>Zoom</span><button data-zoom="-1" aria-label="Zoom out">&minus;</button><button data-zoom="1" aria-label="Zoom in">+</button><button id="resetCamera" title="Reset zoom and position for the current view">Reset</button></div>
-    <div class="camera-row"><span>Move avatar</span><button data-pan="-1,0" aria-label="Move avatar left">&larr;</button><button data-pan="0,1" aria-label="Move avatar up">&uarr;</button><button data-pan="0,-1" aria-label="Move avatar down">&darr;</button><button data-pan="1,0" aria-label="Move avatar right">&rarr;</button></div>
-    <p>Scroll over the avatar to zoom &middot; Right-drag to move</p>
-  </nav>
+    <div class="camera-row"><span>Position</span><button data-pan="-1,0" aria-label="Move avatar left">&larr;</button><button data-pan="0,1" aria-label="Move avatar up">&uarr;</button><button data-pan="0,-1" aria-label="Move avatar down">&darr;</button><button data-pan="1,0" aria-label="Move avatar right">&rarr;</button></div>
+    <p>On the avatar: left-drag to move, right-drag to rotate.<br>Scroll over the scene to zoom.</p>
+  </details>
   <script type="module" src="./app.js"></script>
 </body>
 </html>

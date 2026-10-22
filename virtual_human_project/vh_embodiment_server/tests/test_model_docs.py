@@ -19,8 +19,9 @@ class ModelDocsTests(unittest.TestCase):
             self.assertNotIn('description', definitions['SpeakRequest']['properties']['gesture'])
             self.assertIn('\U0001f609', definitions['SpeakRequest']['properties']['expression']['anyOf'][0]['enum'])
             self.assertIn('handup', definitions['SpeakRequest']['properties']['gesture']['anyOf'][0]['enum'])
-            self.assertEqual(client.get('/model-api').status_code, 200)
-            self.assertEqual(client.get('/model-api.md').status_code, 200)
+            self.assertEqual(client.get('/model-api').status_code, 404)
+            self.assertEqual(client.get('/model-api.md').status_code, 404)
+            self.assertEqual(client.get('/readme').status_code, 404)
             self.assertIn('expressions', client.get('/api/catalog').json())
 
 

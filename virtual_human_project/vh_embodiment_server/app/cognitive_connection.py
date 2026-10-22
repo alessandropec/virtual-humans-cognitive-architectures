@@ -70,7 +70,7 @@ class CognitiveConnection:
                 raise HTTPException(400, 'Choose an existing Python server file using its full path.')
             python = Path(settings.agent_python).expanduser()
             if not python.is_absolute() or not python.is_file():
-                raise HTTPException(400, 'Select the course .venv-vh-course Python executable in Cognitive Architecture Server settings. See the cognitive server README.')
+                raise HTTPException(400, 'Select the course .venv-vh-course Python executable in Cognitive Architecture Server settings.')
             try:
                 # No shell, no port-based process killing. Logs remain beside the script.
                 with (script.parent / 'cognitive-server.log').open('a', encoding='utf-8') as log:
