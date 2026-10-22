@@ -1,73 +1,65 @@
-# VH Embodiment Server
+# Installation guide
 
-A browser avatar with chat, local speech recognition, voice, facial expressions, gestures and an image whiteboard. Connect it to your Python agent or try behaviours directly in the API Playground.
+Install and open **VH Embodiment Server**, the application that displays the avatar. Its installer also prepares Python, speech models and the connection to the cognitive server. You do not need a separate installation for the agent.
 
-## Requirements
+## Before you start
 
-- A 64-bit Windows computer, or macOS 14+ on Apple Silicon / Intel. On Mac, processing uses CPU; GPU acceleration is not supported.
-- A browser with WebGL and microphone support. Allow microphone access when recording.
-- Internet during installation. Speech and the Playground work locally afterward; an online LLM still needs Internet.
+Download and extract the whole repository. Keep its folders together. You need Internet for setup and a browser with WebGL support.
 
-Resource estimates for planning, rather than guaranteed performance on every computer:
+Choose **Windows or Mac** below, then continue to **Try the chat**.
 
-| Configuration | RAM | Free disk space |
+## Installation
+
+### Windows
+
+1. In the downloaded repository, open `virtual_human_project/vh_embodiment_server/dist/win/VirtualHuman-Setup.exe`.
+2. If setup detects an NVIDIA GPU, you can enable acceleration for voice and transcription. Otherwise leave CPU selected.
+3. Click **Install**. Leave **Launch after installation** checked: the avatar opens when setup finishes.
+
+Next time, open `virtual_human_project/installation/VirtualHuman.exe`.
+
+### Mac
+
+1. Open `virtual_human_project/vh_embodiment_server/dist/mac/` and extract `VirtualHuman-Mac-CPU-preview.zip` there.
+2. Open **Install Virtual Human.app** and complete setup.
+3. Open **Virtual Human.app** in your user Applications folder.
+
+Mac uses CPU; GPU acceleration is not supported.
+
+## Try the chat
+
+1. Wait for the avatar to appear and the connection indicator to turn green.
+2. Type **Hello** and press **Send**.
+3. The avatar replies **"Hello world"**. This confirms that the application and agent are connected.
+
+The default mock agent always returns this fixed phrase. No LLM or API key is needed. To change the answer and build your own agent, continue to the [Agent guide](../vh_cognitive_architecture_server/README.md).
+
+You can also use the microphone: press it to record and press it again to send. **Use voice** turns the avatar's voice on or off. Closing the avatar tab shuts down the local application.
+
+<details>
+<summary>Computer requirements</summary>
+
+64-bit Windows, or macOS 14+ on Apple Silicon / Intel. A microphone is needed only for voice input.
+
+| Configuration | RAM estimate | Free disk space |
 | --- | --- | --- |
 | CPU with Whisper Tiny | 4 GB | 6 GB |
 | CPU with Whisper Small | 8 GB | 6 GB |
 | Windows with NVIDIA acceleration | 8 GB and 4 GB GPU memory | 14 GB |
 
-Both speech models are installed. GPU use is optional and needs a compatible NVIDIA driver already installed.
+Setup installs both Whisper models. Small is the default; Tiny uses fewer resources. NVIDIA acceleration needs a compatible driver already installed.
 
-## Installation
+</details>
 
-Clone or download the whole repository and extract it before starting. Keep the installer in its original repository folder so setup can find the project.
+<details>
+<summary>Where the application is installed</summary>
 
-### Windows
+Inside `virtual_human_project/`, setup creates `installation/` for the application and speech models, and `.venv-vh-course/` for the shared Python environment. Keep both folders in place. For course notebooks, select `.venv-vh-course` as the VS Code kernel.
 
-1. Open `virtual_human_project/vh_embodiment_server/dist/win/VirtualHuman-Setup.exe`.
-2. If setup detects a compatible NVIDIA GPU, enable acceleration for transcription and/or voice to use it. Setup installs the required libraries. If no GPU is detected, leave CPU selected; it works without extra hardware.
-3. Click **Install** and wait for the checks to finish. Keep **Launch after installation** selected to open the app automatically.
-4. For later launches, open `virtual_human_project/installation/VirtualHuman.exe`.
+</details>
 
-### Mac
-
-1. Extract `virtual_human_project/vh_embodiment_server/dist/mac/VirtualHuman-Mac-CPU-preview.zip` in its `dist/mac` folder.
-2. Open `Install Virtual Human.app` and complete setup.
-3. Open `Virtual Human.app` in your user Applications folder.
-
-Mac uses CPU; GPU acceleration is not supported. Use setup on each computer; the installed folder is not portable.
-
-### What setup installs
-
-| Location inside `virtual_human_project/` | Contents |
-| --- | --- |
-| `installation/` | Embodiment application, speech models and local settings |
-| `.venv-vh-course/` | Shared Python 3.12 environment for both servers and all notebooks |
-| `installation/.python/` | Private Python when a suitable existing Python is unavailable |
-
-Setup installs Whisper Small and Tiny, plus four Piper voices: English/Italian, female/male. It reuses compatible environments and verified downloads. Select `.venv-vh-course` as the kernel in VS Code notebooks. Keep these folders in place.
-
-### Update or reinstall
-
-Close both servers, update the repository, then run the installer again from the same location. It reuses a compatible `.venv-vh-course` and verified models/downloads, and completes missing dependencies. There is no need to delete the environment or models. Select the NVIDIA options again if you want to keep using acceleration, then click **Install**.
-
-### Downloads and releases
-
-Use the installer in this repository's `dist/win` or `dist/mac` folder. The `speech-models-v1` GitHub release stores the speech model files used by setup: **you do not need to download them manually**. Setup downloads and checks the files it needs.
-
-## First launch
-
-1. The launcher opens `http://127.0.0.1:8899`. Wait for the avatar and speech models to load.
-2. Check the connection indicator at the top. **Connecting...** means the cognitive server is being contacted; green means connected. Settings contains its start and restart controls.
-3. Type a message or press the microphone, speak, then press it again to stop and send. **Use voice** switches avatar speech on or off.
-
-**On a fresh download of the public repository, the mock agent is already selected.** Send any message: it replies **"Hello world"** every time. This is expected and confirms that the avatar and cognitive server are connected. No provider account or API key is needed for this test.
-
-To program the agent, change its answer or connect an LLM, follow the [VH Cognitive Architecture Server guide](../vh_cognitive_architecture_server/README.md). That is where your Python agent code lives; this application handles chat, speech and the avatar.
-
-Use **API Playground** to try avatar behaviours directly, without calling an agent.
-
-### Main controls
+<details>
+<summary>Avatar controls</summary>
 
 | Area | Use |
 | --- | --- |
@@ -80,7 +72,12 @@ Use **API Playground** to try avatar behaviours directly, without calling an age
 
 Keep one avatar tab open. Closing it shuts down the embodiment and its connected local cognitive server after a short grace period. A page refresh keeps the session running. Stop the application before reinstalling.
 
+</details>
+
 ## API reference
+
+<details>
+<summary>Send an avatar reply with POST /api/speak</summary>
 
 Use **`POST http://127.0.0.1:8899/api/speak`** with `Content-Type: application/json`. Keep the avatar page open. The API Playground provides a ready-to-run example without writing a client.
 
@@ -181,6 +178,8 @@ The URL above is an example: use an image actually uploaded to this running serv
 ```
 
 An image command replaces the current image. Null preserves it. Failed image loads preserve the previous board. Uploaded images are temporary and disappear when the server stops.
+
+</details>
 
 </details>
 

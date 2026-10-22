@@ -1,15 +1,13 @@
-# Virtual Human Project
+# Project overview
 
-A talking browser avatar connected to an editable Python agent.
+The project has two connected parts:
 
-| Component | What it does | Guide |
-| --- | --- | --- |
-| VH Embodiment Server | Chat, microphone, local speech recognition and generation, avatar and whiteboard | [Install and launch](vh_embodiment_server/README.md) |
-| VH Cognitive Architecture Server | Receives text, runs your agent and returns an avatar reply | [Edit and run an agent](vh_cognitive_architecture_server/README.md) |
+| Component | Role |
+| --- | --- |
+| VH Embodiment Server | Displays the avatar and handles chat, speech and the whiteboard |
+| VH Cognitive Architecture Server | Runs your Python agent and returns its answer |
 
-Start with the installation guide. Setup creates `installation/` and one shared Python environment, `.venv-vh-course/`, inside this folder.
-
-The public download uses a **mock agent** that replies **"Hello world"** to every message. This lets you check the installation without an LLM or key. To change the reply and build your agent, follow the [Cognitive Architecture Server guide](vh_cognitive_architecture_server/README.md).
+**Start with the [Installation guide](vh_embodiment_server/README.md).** The default agent replies "Hello world" so you can test the connection without an LLM. Then follow the [Agent guide](vh_cognitive_architecture_server/README.md) to program its behaviour.
 
 ## How a conversation works
 
