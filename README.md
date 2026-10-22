@@ -19,15 +19,6 @@ For the foundations of virtual humans and how to build an embodiment in Unity, s
 | [virtual_human_course](virtual_human_course/README.md) | Modules, slides, notebooks and course Python requirements |
 | [virtual_human_project](virtual_human_project/README.md) | Avatar application, cognitive server and installers |
 
-## Programme
-
-| Module | Topics |
-|---|---|
-| **0 · Introduction and Setup** | Course project, model providers, Python environment and first LLM calls |
-| **1 · Cognitive Architectures and Large Language Models** | Psychological foundations · LLMs, working memory and prompting · Introduction to LangChain |
-| **2 · From Large Language Models to Virtual Humans** | LangGraph workflows · Stateful agents and conversation memory · Integration with the virtual human |
-| **Webinar · The Virtual Meteorologist** | Extend the virtual human with tools and live weather data |
-
 ## Quick start
 
 1. Choose **Code > Download ZIP** and extract the repository, or clone it. Keep both folders together.
@@ -41,6 +32,7 @@ To program the avatar's agent, follow the [Agent guide](virtual_human_project/vh
 
 ## Course materials
 
-Slides and notebooks follow the `virtual_human_course/Module_*/Chapter_*` structure. Open a chapter README for its slide and code links.
+**[Module 0: Introduction and Setup](virtual_human_course/Module_0/Chapter_01/README.md)** introduces the virtual human project and guides you through installation, VS Code, provider keys and your first LLM call.
 
-For notebooks, use VS Code with the Python and Jupyter extensions and select the `virtual_human_project/.venv-vh-course` environment created by setup.
+- [Slides (PDF)](virtual_human_course/Module_0/Chapter_01/Slides/Module_0_Chapter_01_Introduction_and_Setup.pdf) · [PowerPoint](virtual_human_course/Module_0/Chapter_01/Slides/Module_0_Chapter_01_Introduction_and_Setup.pptx)
+- [First-call notebook](virtual_human_course/Module_0/Chapter_01/Code/00_first_call.ipynb): try the model providers using the shared Python environment.

@@ -2,12 +2,7 @@
 
 Course slides and notebooks are organised by module and chapter.
 
-| Module | Topics |
-| --- | --- |
-| Module 0 | Introduction and setup |
-| Module 1 | Cognitive architectures, LLMs and LangChain |
-| Module 2 | Agent workflows, memory and avatar integration |
-| Webinar | The Virtual Meteorologist |
+**[Module 0: Introduction and Setup](Module_0/Chapter_01/README.md)** covers the project, installation, VS Code, provider keys and first LLM calls. Open the chapter for its slides and notebook.
 
 ## Choose your setup
 
