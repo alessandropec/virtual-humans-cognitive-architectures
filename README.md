@@ -29,13 +29,13 @@ For the foundations of virtual humans and how to build an embodiment in Unity, s
 
 4. Install [VS Code](https://code.visualstudio.com/download), our course IDE, and its Microsoft [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) and [Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) extensions. VS Code is installed separately from the project.
 5. In VS Code, open the extracted repository folder and the [first notebook](virtual_human_course/Module_0/Chapter_01/Code/00_first_call.ipynb). Under **Select Kernel**, choose `virtual_human_project/.venv-vh-course`, the environment created by setup.
-6. Follow [Module 0: Introduction and Setup](virtual_human_course/Module_0/Chapter_01/README.md) for the setup slides, provider keys and first LLM call.
+6. Follow [Module 0: Introduction and Setup](virtual_human_course/Module_0/Chapter_01/Slides/Module_0_Chapter_01_Introduction_and_Setup.pdf) for the setup slides, provider keys and first LLM call.
 
 To program the avatar's agent, follow the [Agent guide](virtual_human_project/vh_cognitive_architecture_server/README.md).
 
 ## Course materials
 
-**[Module 0: Introduction and Setup](virtual_human_course/Module_0/Chapter_01/README.md)** introduces the virtual human project and guides you through installation, VS Code, provider keys and your first LLM call.
+**Module 0: Introduction and Setup** introduces the virtual human project and guides you through installation, VS Code, provider keys and your first LLM call.
 
 - [Slides (PDF)](virtual_human_course/Module_0/Chapter_01/Slides/Module_0_Chapter_01_Introduction_and_Setup.pdf) · [PowerPoint](virtual_human_course/Module_0/Chapter_01/Slides/Module_0_Chapter_01_Introduction_and_Setup.pptx)
 - [First-call notebook](virtual_human_course/Module_0/Chapter_01/Code/00_first_call.ipynb): try the model providers using the shared Python environment.
