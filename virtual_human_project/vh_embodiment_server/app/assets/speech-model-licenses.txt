@@ -1,0 +1,123 @@
+VH course speech models - original sources and license notices
+
+Models are redistributed unchanged for the course. Individual upstream terms apply.
+English HFC voice model cards identify CC BY-NC-SA 4.0 source data.
+This course distribution is intended for non-commercial teaching.
+
+Whisper Tiny and Small: OpenAI Whisper, converted by SYSTRAN/faster-whisper.
+Sources: https://github.com/openai/whisper and https://github.com/SYSTRAN/faster-whisper
+
+Whisper license:
+MIT License
+
+Copyright (c) 2022 OpenAI
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+Piper voice source: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx
+Original model card: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_female/medium/MODEL_CARD
+# Model card for hfc_female (medium)
+
+* Language: en_US (English, United States)
+* Speakers: 1
+* Quality: medium
+* Samplerate: 22,050Hz
+
+## Dataset
+
+* URL: https://ast-astrec.nict.go.jp/en/release/hi-fi-captain/
+* License: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en
+
+## Training
+
+Finetuned from U.S. English lessac voice (medium quality).
+
+
+Piper voice source: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/serena/high/it_IT-serena-high.onnx
+Original model card: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/serena/high/MODEL_CARD
+# Model card for serena (high)
+
+* Language: it_IT (Italian, Italy)
+* Speakers: 1
+* Quality: high
+* Samplerate: 22,050Hz
+
+## Dataset
+
+* URL: https://huggingface.co/datasets/committa/serena-synthetic-it-27h
+* License: CC-BY-4.0
+
+## Training
+
+Trained from scratch.
+
+
+Piper voice source: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx
+Original model card: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_male/medium/MODEL_CARD
+# Model card for hfc_male (medium)
+
+* Language: en_US (English, United States)
+* Speakers: 1
+* Quality: medium
+* Samplerate: 22,050Hz
+
+## Dataset
+
+* URL: https://ast-astrec.nict.go.jp/en/release/hi-fi-captain/
+* License: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en
+
+## Training
+
+Finetuned from U.S. English lessac voice (medium quality).
+
+
+Piper voice source: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/riccardo/x_low/it_IT-riccardo-x_low.onnx
+Original model card: https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/riccardo/x_low/MODEL_CARD
+# Model card for riccardo (x_low)
+
+* Language: it_IT (Italian, Italy)
+* Speakers: 1
+* Quality: x_low
+* Samplerate: 16,000Hz
+
+## Dataset
+
+* URL: https://www.caito.de/2019/01/03/the-m-ailabs-speech-dataset/
+* License: See URL
+
+## Training
+
+Trained from scratch.
+
+
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+CC BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/
+Hi-Fi-CAPTAIN dataset: NICT, https://ast-astrec.nict.go.jp/en/release/hi-fi-captain/
+
+
+M-AILABS original license notice (also retained by the Piper author in Larynx):
+Copyright (c) 2017-2019 by the original creators @ M-AILABS with the following license:
+
+Redistribution and use in any form, including any commercial use, with or without modification are permitted provided that the following conditions are met:
+
+Redistributions of source data must retain the above copyright notice, this list of conditions and the following disclaimer.
+Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this downloaded data, source-code or binary-code without specific prior written permission.
+
+THIS DATA IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE and/or DATA, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

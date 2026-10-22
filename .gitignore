@@ -3,11 +3,9 @@
 **/.venv/
 **/__pycache__/
 **/.ipynb_checkpoints/
-**/PythonProject/models/*
-!**/PythonProject/models/.gitkeep
-**/PythonProject/static/
-**/[Ll]ibrary/
-**/[Tt]emp/
-**/[Oo]bj/
-**/[Ll]ogs/
-**/[Uu]ser[Ss]ettings/
+**/.venv-vh-course/
+virtual_human_project/installation/
+**/settings.json
+*.log
+**/.DS_Store
+**/*.part

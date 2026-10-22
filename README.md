@@ -6,7 +6,7 @@
 
 Build the Python agent behind a virtual human: from a first LLM call to conversation memory, structured behaviour and tools. The course connects psychological models of memory with the cognitive architectures used to give a virtual character continuity across interactions.
 
-This course builds on [AI-Powered Virtual Humans, Part 1](https://github.com/stevieTheTurtle/AI_powered_VH_2026-Part_1), which explains how to develop the virtual human in Unity and its speech-to-text and text-to-speech pipeline. Part 1 is recommended but not required. Here, we start from that project and focus on the agent's cognitive architecture. For this course, please download [our integration version](unity_virtual_human/), even if you already have the Part 1 project, so that the Python code and dependencies match the course examples.
+The course uses our [VH Embodiment Server](virtual_human_project/README.md), built on TalkingHead and HeadAudio. The browser avatar connects to the Python cognitive architecture through a JSON API. Follow the [installation guide](virtual_human_project/vh_embodiment_server/README.md) to get started.
 
 ## Programme
 

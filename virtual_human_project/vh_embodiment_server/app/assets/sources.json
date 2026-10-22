@@ -1,0 +1,14 @@
+[
+  {
+    "file": "david.glb",
+    "url": "https://raw.githubusercontent.com/met4citizen/HeadAudio/d3af5f9ff86ab6b2b1913d411a4e1922ec101953/avatars/david.glb",
+    "bytes": 4785200,
+    "sha256": "2875f23a2da5960fd860b0a1106e309a027226367e6c48761868426d16502b8e"
+  },
+  {
+    "file": "walking.fbx",
+    "url": "https://raw.githubusercontent.com/met4citizen/TalkingHead/2afe6d79779313db8909badebf46f9805a6c7b70/animations/walking.fbx",
+    "bytes": 372032,
+    "sha256": "d2d23d40fbd5cd3d773ca2493951af79a572e55a593b974ae545bf823fd3ef59"
+  }
+]

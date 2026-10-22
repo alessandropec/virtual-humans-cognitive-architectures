@@ -1,0 +1,16 @@
+{
+  "installer": "VirtualHuman-Setup.exe",
+  "bytes": 14771200,
+  "sha256": "442cdfe7f32883e1d183950f8187a667d157f87854d3e73bc69ccd59f18d32e4",
+  "version": "0.1-preview",
+  "signed": false,
+  "python": "3.12.1",
+  "checks": [
+    "Python compilation",
+    "Download resume/integrity/disk space",
+    "CPU/GPU fallback policy",
+    "Filtered model API",
+    "Embedded ZIP integrity",
+    "No personal settings/keys"
+  ]
+}

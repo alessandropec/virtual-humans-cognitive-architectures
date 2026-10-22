@@ -17,14 +17,5 @@ langchain-google-genai
 langchain-groq
 langchain-openai
 
-# Unity bridge and local speech processing
-fastapi>=0.115,<1
-uvicorn>=0.30,<1
-python-multipart>=0.0.18,<1
-pydantic>=2,<3
-faster-whisper==1.2.1
-av==13.1.0
-piper-tts==1.8.0
-
 # Local provider key configuration
 PyYAML

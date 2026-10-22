@@ -1,0 +1,15 @@
+# Python 3.12. Full course environment (installer also supports optional NVIDIA packages).
+-r ../requirements.txt
+
+# Local servers and speech
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+python-multipart>=0.0.18,<1
+pydantic>=2,<3
+httpx>=0.27,<1
+websockets>=13
+faster-whisper==1.2.1
+av==13.1.0
+piper-tts==1.8.0
+Pillow>=11,<13
+

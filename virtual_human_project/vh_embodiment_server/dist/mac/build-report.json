@@ -1,0 +1,18 @@
+{
+  "artifact": "VirtualHuman-Mac-CPU-preview.zip",
+  "sha256": "092fff4f492415f037849ef36e9b3ac81e0bf141d567fa550fd9523111c39d53",
+  "platforms": [
+    "macOS 14+ arm64 CPU",
+    "macOS 14+ x86_64 CPU"
+  ],
+  "signed": false,
+  "notarized": false,
+  "native_macos_tested": false,
+  "checks": [
+    "Python and bootstrap shell syntax",
+    "CPU-only policy tests",
+    "wheel availability and dependency closure for both architectures",
+    "ZIP integrity and executable permissions",
+    "no personal settings or GPU dependencies"
+  ]
+}

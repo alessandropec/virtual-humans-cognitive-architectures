@@ -1,0 +1,234 @@
+{
+  "moods": [
+    "neutral",
+    "happy",
+    "angry",
+    "sad",
+    "fear",
+    "disgust",
+    "love",
+    "sleep"
+  ],
+  "expressions": [
+    {
+      "id": "😐",
+      "name": "Puzzled",
+      "aliases": [
+        "😶"
+      ]
+    },
+    {
+      "id": "😏",
+      "name": "Smirk",
+      "aliases": []
+    },
+    {
+      "id": "🙂",
+      "name": "Gentle smile",
+      "aliases": [
+        "🙃"
+      ]
+    },
+    {
+      "id": "😊",
+      "name": "Warm smile",
+      "aliases": [
+        "😇"
+      ]
+    },
+    {
+      "id": "😀",
+      "name": "Open smile",
+      "aliases": []
+    },
+    {
+      "id": "😃",
+      "name": "Enthusiasm",
+      "aliases": []
+    },
+    {
+      "id": "😄",
+      "name": "Joy",
+      "aliases": []
+    },
+    {
+      "id": "😁",
+      "name": "Toothy smile",
+      "aliases": []
+    },
+    {
+      "id": "😆",
+      "name": "Laughter",
+      "aliases": []
+    },
+    {
+      "id": "😝",
+      "name": "Tongue out",
+      "aliases": [
+        "😋",
+        "😛",
+        "😜",
+        "🤪"
+      ]
+    },
+    {
+      "id": "😂",
+      "name": "Intense laughter",
+      "aliases": [
+        "🤣",
+        "😅"
+      ]
+    },
+    {
+      "id": "😉",
+      "name": "Wink",
+      "aliases": []
+    },
+    {
+      "id": "😭",
+      "name": "Crying",
+      "aliases": []
+    },
+    {
+      "id": "🥺",
+      "name": "Pleading",
+      "aliases": []
+    },
+    {
+      "id": "😞",
+      "name": "Disappointment",
+      "aliases": []
+    },
+    {
+      "id": "😔",
+      "name": "Sadness",
+      "aliases": []
+    },
+    {
+      "id": "😳",
+      "name": "Surprise",
+      "aliases": []
+    },
+    {
+      "id": "☹️",
+      "name": "Displeasure",
+      "aliases": []
+    },
+    {
+      "id": "😚",
+      "name": "Kiss with closed eyes",
+      "aliases": []
+    },
+    {
+      "id": "😘",
+      "name": "Kiss",
+      "aliases": []
+    },
+    {
+      "id": "🥰",
+      "name": "Tenderness",
+      "aliases": []
+    },
+    {
+      "id": "😍",
+      "name": "Admiration",
+      "aliases": [
+        "🤩"
+      ]
+    },
+    {
+      "id": "😡",
+      "name": "Anger",
+      "aliases": []
+    },
+    {
+      "id": "😠",
+      "name": "Irritation",
+      "aliases": [
+        "🤬"
+      ]
+    },
+    {
+      "id": "😒",
+      "name": "Disapproval",
+      "aliases": []
+    },
+    {
+      "id": "😱",
+      "name": "Fright",
+      "aliases": []
+    },
+    {
+      "id": "😬",
+      "name": "Tension",
+      "aliases": []
+    },
+    {
+      "id": "🙄",
+      "name": "Eye roll",
+      "aliases": []
+    },
+    {
+      "id": "👀",
+      "name": "Side glance",
+      "aliases": []
+    },
+    {
+      "id": "😴",
+      "name": "Drowsiness",
+      "aliases": []
+    }
+  ],
+  "characters": [
+    {
+      "id": "julia",
+      "name": "Julia"
+    },
+    {
+      "id": "david",
+      "name": "David"
+    }
+  ],
+  "gestures": [
+    {
+      "id": "handup",
+      "name": "Handup"
+    },
+    {
+      "id": "index",
+      "name": "Index"
+    },
+    {
+      "id": "ok",
+      "name": "Ok"
+    },
+    {
+      "id": "thumbup",
+      "name": "Thumb Up"
+    },
+    {
+      "id": "thumbdown",
+      "name": "Thumb Down"
+    },
+    {
+      "id": "side",
+      "name": "Side"
+    },
+    {
+      "id": "shrug",
+      "name": "Shrug"
+    },
+    {
+      "id": "namaste",
+      "name": "Namaste"
+    },
+    {
+      "id": "yes",
+      "name": "Nod"
+    },
+    {
+      "id": "no",
+      "name": "Shake head"
+    }
+  ]
+}

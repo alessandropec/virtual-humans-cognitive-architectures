@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VH Embodiment Server</title>
+  <link rel="icon" href="/assets/branding/vh-icon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="/assets/branding/vh-icon.ico">
+  <link rel="apple-touch-icon" href="/assets/branding/vh-icon.png">
+  <style>
+    *{box-sizing:border-box} :root{color-scheme:dark;font:15px system-ui,sans-serif;color:#eef4ff}
+    html,body{min-height:100%;height:100%}body{margin:0;background:#111b2a;overflow:hidden} button,input,select,textarea{font:inherit}
+    button{cursor:pointer;color:inherit;background:#293c54;border:1px solid #52657b;border-radius:10px;padding:10px 14px}
+    button:hover{background:#3b5473} button:disabled{opacity:.45;cursor:wait} button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #88e2c5;outline-offset:3px}
+    #studio{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 35%,#384c65,#111b2a 75%);pointer-events:none}
+    #studioScreen{position:absolute;top:17%;left:6%;width:48%;aspect-ratio:16/9;border:9px solid #26384b;border-radius:12px;background:linear-gradient(135deg,#142938,#091523);box-shadow:0 0 0 1px #6e8b9e,0 18px 65px #0007,inset 0 0 60px #60bddb0c;display:grid;place-content:center;text-align:center}
+    #studioScreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:3px}
+    #screenTools{position:fixed;pointer-events:none;z-index:0} #screenTools[hidden]{display:none} #screenTools button{position:absolute;pointer-events:auto;background:#142638cc;color:#b8cddd;border-color:#607e9366;padding:4px 9px;font-size:11px;touch-action:none;user-select:none} #screenDrag{left:10px;top:10px;cursor:grab} #screenResize{right:0;bottom:0;cursor:nwse-resize} header{z-index:4} #conversation{z-index:3}
+    #studioScreen[hidden]{display:none} #studioScreen span{font-size:11px;letter-spacing:.3em;color:#7793a6} #studioScreen::after{content:'';position:absolute;bottom:7px;right:10px;width:5px;height:5px;border-radius:50%;background:#86dfc3}
+    #avatar{position:fixed;inset:0;z-index:1;pointer-events:none} #avatar canvas{position:relative;pointer-events:none} .expression-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:12px}.expression-grid button{padding:7px;font-size:22px}
+    @media(max-width:620px){#studioScreen{left:4%;width:66%;top:22%;border-width:5px}}
+    header{position:fixed;top:24px;left:28px;right:28px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;gap:16px}
+    header>*{pointer-events:auto} h1{font-size:20px;margin:0 0 5px} #connection{font-size:12px;color:#b8c9dc;margin:0}
+    .glass{background:rgba(17,28,44,.88);border:1px solid #536b8255;box-shadow:0 18px 60px #0004;backdrop-filter:blur(18px)}
+    #conversation{position:fixed;left:24px;top:50%;width:min(720px,calc(100% - 24px));height:280px;border-radius:18px;padding:12px 16px 18px;display:flex;flex-direction:column;max-width:calc(100% - 24px);max-height:calc(100dvh - 24px)}
+    .chat-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-shrink:0} .chat-top strong{font-size:12px;letter-spacing:.04em;color:#d3e1f1}
+    #chatDrag{flex:1;min-width:0;cursor:grab;touch-action:none;user-select:none;padding:8px 0} #chatDrag:active{cursor:grabbing}.chat-actions{display:flex;gap:4px}.chat-actions button{padding:5px 8px;font-size:16px;line-height:1.2}
+    .chat-status{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-shrink:0} #status{margin:0;font-size:12px;color:#a9c5d2;overflow-wrap:anywhere} #messages{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
+    #resizeChat{position:absolute;right:2px;bottom:1px;padding:0 5px;border:0;background:none;color:#aac6dd;cursor:nwse-resize;touch-action:none;font-size:18px;line-height:18px} .dock-hint{outline:2px solid #86dfc3}
+    .message.pending{color:#afc2d9}.pending-content{display:flex;align-items:center;gap:8px}.spinner{display:inline-block;width:13px;height:13px;border:2px solid #9ac9ff44;border-top-color:#9ac9ff;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}.is-loading::before{content:"";display:inline-block;width:13px;height:13px;margin-right:8px;vertical-align:middle;border:2px solid #9ac9ff44;border-top-color:#9ac9ff;border-radius:50%;animation:spin .8s linear infinite} @keyframes spin{to{transform:rotate(360deg)}}
+    @media(prefers-reduced-motion:reduce){.spinner,.is-loading::before{animation:none}}
+    #messages:empty::before{content:'Type a message or use the microphone.';display:block;font-size:13px;color:#a6b8cc;padding:8px 0 14px}
+    .message{padding:7px 0 10px;border-top:1px solid #b8d4ee16}.message strong{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#9dc8ff}.message.avatar strong{color:#88e2c5}
+    .message p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.45}
+    .message.draft strong::after{content:' · draft transcript';font-weight:400;color:#aabed4}
+    #chat{display:flex;gap:8px;align-items:stretch;margin-top:8px;flex-shrink:0} #text{flex:1;min-width:0;background:#ffffff09;color:inherit;border:1px solid #70849b66;border-radius:10px;padding:11px 12px}
+    #send{background:#86dfc3;color:#132c2c;border-color:#86dfc3;font-weight:600} #mic[aria-pressed=true]{background:#974953;border-color:#db818b}
+    [hidden]{display:none!important}
+    #settings{position:fixed;inset:0;margin:auto;width:min(880px,calc(100vw - 32px));height:min(690px,calc(100dvh - 40px));max-width:none;max-height:none;padding:0;border:1px solid #4b647a;border-radius:20px;background:#172436;color:#eef4ff;box-shadow:0 30px 100px #0008;overflow:hidden}
+    #settings[open]{display:flex;flex-direction:column} #settings::backdrop{background:#06101bb3;backdrop-filter:blur(5px)}
+    .modal-head,.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 24px;border-bottom:1px solid #455c7044}.modal-head h2,.panel-head h2{margin:0;font-size:21px}.eyebrow{font-size:10px;letter-spacing:.16em;color:#88e2c5;margin:0 0 7px}
+    .settings-layout{display:grid;grid-template-columns:185px minmax(0,1fr);flex:1;min-height:0}.settings-tabs{display:flex;flex-direction:column;gap:5px;padding:18px 12px;background:#111d2c}.settings-tabs button{text-align:left;border:0;background:transparent;font-size:13px}.settings-tabs button[aria-selected=true]{background:#284a50;color:#a6f1d9}.settings-tabs .playground-link{margin-top:auto;color:#88e2c5;border-top:1px solid #455c7055;border-radius:0;padding-top:16px}.settings-content{padding:6px 28px 24px;overflow-y:auto}.settings-panel h3{font-size:19px}.modal-footer{display:flex;align-items:center;gap:20px;justify-content:space-between;padding:14px 24px;border-top:1px solid #455c7055}.modal-footer #saveSettings{width:auto;margin:0;flex-shrink:0}.modal-footer p{margin:0}
+    #playground{position:fixed;right:16px;top:90px;bottom:70px;width:min(560px,48vw);z-index:5;border-radius:18px;display:flex;flex-direction:column;overflow:hidden}
+    .playground-scroll{overflow:auto;padding:0 20px 20px;flex:1;min-height:0}.playground-scroll pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#0b1625;padding:14px;border-radius:10px;max-height:260px;overflow:auto}.playground-scroll fieldset{border:0;padding:0;margin:0}.playground-scroll input[type=number]{width:100%;padding:10px;background:#0c1726;color:inherit;border:1px solid #4e637b;border-radius:8px}.playground-scroll table{font-size:12px;width:100%;border-collapse:collapse}.playground-scroll td,.playground-scroll th{padding:7px;text-align:left;border-bottom:1px solid #455c7055}.playground-scroll code{overflow-wrap:anywhere}.api-buttons{margin-top:16px}.api-buttons button:first-child{background:#86dfc3;color:#132c2c}.api-feedback{min-height:18px}.api-feedback.error{color:#ffb4b4}
+    body.api-mode #conversation{display:none}body.api-mode #avatar{right:min(592px,50vw)}
+    #cameraControls{position:fixed;bottom:16px;right:24px;display:flex;flex-direction:column;gap:6px;max-width:calc(100vw - 24px);z-index:4;padding:8px;border-radius:12px}#cameraControls .camera-row{display:flex;align-items:center;gap:5px}#cameraControls span{font-size:11px;color:#bdd0e4;flex:1}#cameraControls p{font-size:10px;color:#aabed4;margin:1px 2px}#cameraControls button{font-size:12px;padding:6px 10px}#cameraControls button[aria-pressed=true]{background:#284a50;color:#a6f1d9}body.api-mode #cameraControls{right:calc(min(592px,50vw) + 16px)}
+    @media(max-width:760px){header{left:12px;right:12px;top:12px}header h1{font-size:16px}header button{font-size:11px;padding:8px}#settings{width:calc(100vw - 16px);height:calc(100dvh - 24px)}.modal-head{padding:16px}.settings-layout{grid-template-columns:120px minmax(0,1fr)}.settings-tabs{padding:10px 5px}.settings-tabs button{font-size:11px;padding:10px 7px}.settings-content{padding:0 14px 16px}.modal-footer{padding:12px}#playground{top:auto;bottom:0;left:0;right:0;width:auto;height:53dvh;border-radius:18px 18px 0 0}.panel-head{padding:12px 16px}.panel-head h2{font-size:17px}.panel-head .eyebrow{display:none}body.api-mode #avatar{right:0;bottom:53dvh;top:60px}#cameraControls{right:12px;bottom:12px}body.api-mode #cameraControls{right:12px;bottom:calc(53dvh + 8px)}#cameraControls button{padding:6px 10px}}
+    h3{font-size:14px;margin:22px 0 12px} label{display:block;font-size:12px;color:#bdd0e4;margin:12px 0 6px} input[type=url],input[type=text].setting,select,textarea{display:block;width:100%;padding:10px 11px;background:#0c1726;color:inherit;border:1px solid #4e637b;border-radius:8px}
+    textarea{resize:vertical;min-height:95px} .row{display:flex;gap:8px;flex-wrap:wrap} .row>*{flex:1} .note{font-size:12px;color:#aabed4;line-height:1.5} section.settings-section{padding-bottom:22px;border-bottom:1px solid #3d526855}
+    details{margin-top:16px} summary{font-size:12px;color:#b8ccdf;cursor:pointer} input[type=file]{width:100%;font-size:12px;margin-top:10px} a{color:#9ac9ff}
+    #saveSettings{width:100%;margin-top:14px} #settingsMessage{min-height:16px} #viseme{color:#88e2c5;font-family:monospace}
+    details.settings-group{border-bottom:1px solid #3d526866;padding:0 0 18px;margin-top:18px} .settings-group>summary{font-size:15px;font-weight:600;color:#eef4ff;padding:6px 0}.settings-group h3{font-size:13px}.switch{display:flex;align-items:center;gap:9px;font-size:14px;color:#eef4ff}.switch input{width:18px;height:18px;accent-color:#86dfc3}.drawer-footer{padding:10px 0 22px}
+    meter{display:block;width:100%;height:18px;margin:8px 0} meter[hidden]{display:none} #liveLevel{width:60px;height:14px;margin:0} .message details{margin-top:6px} .message audio{display:block;max-width:100%;height:32px;margin-top:8px} .message .note{margin-top:5px}
+    @media(max-width:620px){header{top:16px;left:18px;right:18px} #conversation{padding:10px 12px 18px} #chat{flex-wrap:wrap} #text{flex-basis:60%} #mic{font-size:13px;padding:10px}.chat-top strong{font-size:11px}}
+    #modelLoading{width:min(420px,85vw);padding:36px;border:1px solid #638899;border-radius:20px;background:linear-gradient(145deg,#172c40,#102130);color:#eef6ff;text-align:center;box-shadow:0 24px 90px #0008}
+    #modelLoading::backdrop{background:#06101dcc;backdrop-filter:blur(7px)}
+    #modelLoading .spinner{width:42px;height:42px;border-width:4px;margin:0 auto 18px}
+    #modelLoading h2{margin:0 0 12px;font-size:23px}#modelLoading p{margin:0;color:#bcd1df;line-height:1.6}
+  </style>
+  <script type="importmap">{"imports":{"three":"./lib/dependencies/three/build/three.module.js","three/addons/":"./lib/dependencies/three/examples/jsm/"}}</script>
+</head>
+<body>
+  <dialog id="serverLogs" style="width:min(1000px,90vw);background:#122335;color:#eaf4ff;border:1px solid #557184;border-radius:14px;padding:24px"><div class="row"><button id="logEmbodiment">Embodiment</button><button id="logCognitive">Cognitive</button><button id="closeLogs">Close</button></div><h3 id="logTitle">Embodiment Server</h3><pre id="logOutput" style="height:55vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px" aria-live="off"></pre></dialog>
+  <dialog id="modelLoading" aria-labelledby="modelLoadingTitle" aria-describedby="modelLoadingText"><span class="spinner" aria-hidden="true"></span><h2 id="modelLoadingTitle">Getting ready</h2><p id="modelLoadingText" role="status" aria-live="polite">Loading avatar and speech models...</p></dialog>
+  <div id="studio"><div id="studioScreen" role="img" aria-label="Whiteboard"></div></div>
+  <div id="screenTools" role="group" aria-label="Whiteboard controls"><button id="screenDrag" aria-label="Move whiteboard" title="Drag to move the whiteboard, or use the arrow keys">Move whiteboard</button><button id="screenResize" aria-label="Resize whiteboard" title="Drag to resize, or use the arrow keys">&#9698;</button></div>
+  <div id="avatar" aria-label="Avatar 3D"></div>
+  <header>
+    <div><h1><img src="/assets/branding/vh-icon.svg" width="28" height="28" alt="" style="vertical-align:middle;margin-right:8px">VH Embodiment Server</h1><p id="connection">Loading avatar…</p></div>
+    <div class="row"><button id="openPlayground" aria-controls="playground" aria-expanded="false">API Playground</button><button id="openLogs">Server logs</button><button id="openSettings" aria-controls="settings">Settings</button></div>
+  </header>
+  <section id="conversation" class="glass" aria-label="Conversation">
+    <div class="chat-top"><div id="chatDrag" role="button" tabindex="0" aria-label="Move chat" title="Drag to move; dock near the left edge"><strong>⠿ CONVERSATION</strong></div><div class="chat-actions"><button id="clearConversation" aria-label="Clear conversation" title="Clear conversation" disabled><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg></button><button id="dockChat" aria-label="Dock left" title="Dock left" aria-pressed="false">⇤</button><button id="expandChat" aria-label="Expand or collapse chat" title="Expand or collapse chat" aria-pressed="false">⛶</button><button id="resetChat" aria-label="Reset chat layout" title="Reset chat layout">↺</button></div></div>
+    <div class="chat-status"><meter id="liveLevel" min="0" max="100" value="0" aria-label="Microphone level" hidden></meter><p id="status" role="status">Loading…</p></div>
+    <div id="speechModelsNotice" class="note" hidden><p id="speechModelsMessage" style="white-space:pre-line;overflow-wrap:anywhere" role="alert"></p><div class="row"><button id="selectSpeechModels" type="button">Select models folder</button><button id="skipSpeechModels" type="button">Continue without speech models</button></div></div>
+    <div id="messages" role="log" aria-label="Messages" aria-live="polite"></div>
+    <form id="chat"><input type="text" id="text" maxlength="8000" placeholder="Type a message…" aria-label="Message" required disabled><button id="send" type="submit" disabled>Send</button><button id="mic" type="button" aria-pressed="false" disabled>Microphone</button></form>
+    <button id="resizeChat" type="button" aria-label="Resize chat" title="Drag to resize, or use the arrow keys">◢</button>
+  </section>
+  <dialog id="settings" aria-labelledby="settingsTitle">
+    <div class="modal-head"><div><p class="eyebrow">CONFIGURATION</p><h2 id="settingsTitle">Settings</h2></div><button id="closeSettings" aria-label="Close settings">✕</button></div>
+    <div class="settings-layout"><nav class="settings-tabs" role="tablist" aria-label="Settings categories" aria-orientation="vertical"><button id="tab-character" role="tab" aria-controls="characterGroup" aria-selected="false" tabindex="-1" data-settings-tab="character">Avatar & scene</button><button id="tab-microphone" role="tab" aria-controls="microphoneGroup" aria-selected="false" tabindex="-1" data-settings-tab="microphone">Microphone</button><button id="tab-voice" role="tab" aria-controls="voiceGroup" aria-selected="false" tabindex="-1" data-settings-tab="voice">Voice</button><button id="tab-agent" role="tab" aria-controls="agentGroup" aria-selected="false" tabindex="-1" data-settings-tab="agent">Cognitive Architecture Server</button><button id="tab-advanced" role="tab" aria-controls="advancedGroup" aria-selected="false" tabindex="-1" data-settings-tab="advanced">Models & API</button><button id="settingsToPlayground" class="playground-link">Open API Playground ↗</button></nav>
+    <div class="settings-content"><section id="characterGroup" class="settings-panel" role="tabpanel" aria-labelledby="tab-character" hidden>
+      <h3>Avatar & scene</h3>
+      <label for="character">Character</label><select id="character" disabled></select>
+      <p class="note" id="characterStatus" role="status">The voice automatically matches the character: Julia (female) or David (male).</p>
+      <label class="switch"><input type="checkbox" id="screenEnabled" checked> Show whiteboard</label><p class="note">Drag the whiteboard handle to move it or the bottom-right corner to resize it. The whiteboard and both handles stay behind the avatar. The layout is saved locally.</p><button id="resetScreen">Reset whiteboard layout</button>
+    </section><section id="microphoneGroup" class="settings-panel" role="tabpanel" aria-labelledby="tab-microphone" hidden>
+      <h3>Microphone & transcription</h3>
+      <label for="microphone">Input device</label><select id="microphone"><option value="">System default</option></select>
+      <div class="row" style="margin-top:10px"><button id="refreshMicrophones">Refresh devices</button><button id="testMicrophone">Test level</button></div>
+      <meter id="microphoneLevel" min="0" max="100" value="0" aria-label="Selected microphone level"></meter>
+      <p class="note" id="microphoneStatus">Choose a device and check that the level rises when you speak.</p>
+      <label for="sttLanguage">Transcription language</label><select id="sttLanguage"><option value="en">English</option><option value="it">Italian</option></select>
+      <p class="note">Choose the transcription language. This is independent of the avatar voice language. Default: English.</p>
+      <label class="switch"><input type="checkbox" id="liveTranscription" checked disabled> Live transcription</label>
+      <p class="note">When enabled, text appears as you speak and is sent when you press Stop & send. Otherwise, transcription starts after recording.</p>
+      <label for="sttDevice">Transcription device</label>
+      <select id="sttDevice" disabled><option value="auto">Auto — GPU when available</option><option value="cpu">CPU only</option><option value="cuda">NVIDIA GPU</option></select>
+      <p class="note">Saved automatically for live and complete transcription. Auto falls back to CPU if GPU processing fails. Configure speech generation separately under Voice.</p>
+      <p class="note" id="sttDeviceStatus" role="status">Device not checked yet</p>
+      <button id="retrySpeechDevice" type="button">Check again</button>
+      <label for="sttModel">Transcription model</label>
+      <select id="sttModel" aria-describedby="sttModelHint sttModelTradeoff" disabled>
+        <option value="tiny">Tiny — fastest, more errors</option>
+        <option value="small" selected>Small — balanced speed and accuracy</option>
+      </select>
+      <p class="note" id="sttModelHint"></p>
+      <p class="note" id="sttModelTradeoff">Small balances speed and accuracy. Tiny is faster for computers with limited resources. Both are installed during setup. No models are downloaded during use.</p>
+      <details><summary>Silence filter</summary><label for="vadThreshold">Voice detection threshold</label><input class="setting" id="vadThreshold" type="number" min="0.1" max="0.9" step="0.05" value="0.35"><p class="note">Lower values detect quieter speech but may include noise. Default: 0.35.</p></details>
+    </section><section id="voiceGroup" class="settings-panel" role="tabpanel" aria-labelledby="tab-voice" hidden>
+      <h3>Avatar voice</h3>
+      <label class="switch"><input type="checkbox" id="speechEnabled" checked disabled> Play avatar speech</label>
+      <p class="note">Turn off for text, expressions and actions without speech. Applies immediately.</p>
+      <label for="language">Voice language</label><select id="language"><option value="en">English</option><option value="it">Italian</option></select>
+      <label for="ttsDevice">Speech generation device</label>
+      <select id="ttsDevice"><option value="auto">Auto — GPU when available</option><option value="cpu">CPU only</option><option value="cuda">NVIDIA GPU — required</option></select>
+      <p class="note">Saved automatically and independent of transcription. Auto falls back to CPU if GPU speech generation fails.</p>
+      <p class="note" id="ttsDeviceStatus" role="status">Device not checked yet</p>
+      <button id="testTtsDevice" type="button">Test speech generation</button>
+      <button id="stop" style="margin-top:10px">Stop speech</button>
+    </section><section id="agentGroup" class="settings-panel" role="tabpanel" aria-labelledby="tab-agent" hidden>
+      <h3>Cognitive Architecture Server</h3>
+      <label class="switch"><input id="agentEnabled" type="checkbox"> Enable cognitive server connection</label>
+      <p id="agentStatus" class="note" role="status">Waiting for heartbeat.</p>
+      <label for="agentUrl">Cognitive API URL</label><input id="agentUrl" type="url" placeholder="http://127.0.0.1:8000/agent">
+      <label for="agentHeartbeatUrl">Heartbeat URL</label><input id="agentHeartbeatUrl" type="url" placeholder="http://127.0.0.1:8000/heartbeat">
+      <label for="agentScript">Cognitive server file (full path)</label><input id="agentScript" type="text" placeholder="C:\path\vh_cognitive_architecture_server\vh_cognitive_server.py">
+      <button id="browseCognitive" type="button">Browse server folder...</button>
+      <label for="agentPython">Course Python executable (full path)</label><input id="agentPython" type="text" placeholder=".../.venv-vh-course/Scripts/python.exe or .../.venv-vh-course/bin/python">
+      <button id="browsePython" type="button">Browse course .venv-vh-course...</button>
+      <label class="switch"><input id="agentAutostart" type="checkbox"> Start the Cognitive Architecture Server automatically</label>
+      <p class="note">Settings are also saved when you close this window. Heartbeat runs every 3 seconds. Chat sends only text. Local launch always uses the Python executable selected above.</p>
+      <div class="row"><button id="testHeartbeat">Test heartbeat</button><button id="testAgent">Test cognitive API</button></div>
+      <div class="row"><button id="startAgent">Start Cognitive Architecture Server</button><button id="stopAgent" disabled>Stop Cognitive Architecture Server</button></div>
+      <pre id="agentTestResult" style="white-space:pre-wrap" role="status"></pre>
+    </section><section id="advancedGroup" class="settings-panel" role="tabpanel" aria-labelledby="tab-advanced" hidden><h3>Models & API</h3><label for="modelsDir">Whisper & Piper model folder</label><input class="setting" id="modelsDir" type="text"><button id="browseModels" type="button">Browse models folder...</button><p class="note"><a href="/docs" target="_blank" rel="noreferrer">API reference & schemas</a></p></section></div></div>
+    <div class="modal-footer"><p id="settingsMessage" class="note" role="status"></p><button id="saveSettings" disabled>Save settings</button></div>
+  </dialog>
+  <section id="playground" class="glass" aria-labelledby="playgroundTitle" hidden>
+    <div class="panel-head"><div><p class="eyebrow">COMPOSE · INSPECT · RUN</p><h2 id="playgroundTitle">API Playground</h2></div><button id="closePlayground" aria-label="Close API Playground">✕</button></div>
+    <div class="playground-scroll">
+      <p class="note">Build a real request. Unselected fields are sent as null and keep the current state. No agent is called.</p>
+      <form id="apiForm"><fieldset id="apiFields" disabled>
+        <label for="apiSpeech">Speech text</label><textarea id="apiSpeech" maxlength="8000" placeholder="Optional text for the avatar to say"></textarea>
+        <label for="apiEmotion">Emotion · persistent mood</label><select id="apiEmotion"></select>
+        <p class="note">Starts neutral. Null keeps the current emotion; choose Neutral to reset.</p>
+        <label for="apiExpression">Facial expression</label><select id="apiExpression"></select>
+        <label for="apiGesture">Gesture</label><select id="apiGesture"></select>
+        <p class="note">Expressions and gestures last 5 seconds. Emotion stays until changed. Null keeps the current state.</p>
+        <label for="apiBoard">Whiteboard</label><select id="apiBoard"><option value="">Keep current image</option><option value="image">Show uploaded image</option><option value="clear">Clear whiteboard</option></select>
+        <div id="apiImageUpload" hidden><label for="apiImageFile">PNG, JPEG or WebP · up to 8 MB / 16 megapixels</label><input id="apiImageFile" type="file" accept="image/png,image/jpeg,image/webp"><p id="apiImageUrl" class="note">Choose an image to upload.</p></div>
+        <h3><code>POST /api/speak</code></h3><pre id="apiJson" aria-label="Request JSON">{}</pre>
+        <div class="row api-buttons"><button id="apiRun" type="submit">Run request</button><button id="apiCopy" type="button">Copy JSON</button><button id="apiReset" type="button">Reset form</button></div>
+      </fieldset></form>
+      <p id="apiFeedback" class="note api-feedback" role="status">Waiting for the avatar connection…</p><pre id="apiResult" aria-label="API response" hidden></pre>
+      <details><summary>Available catalog</summary><p class="note">Options are loaded from <a href="/api/catalog" target="_blank" rel="noreferrer">GET /api/catalog</a>. One gesture at a time, alongside emotion and expression.</p><div id="apiCatalog"></div></details>
+      <p class="note"><a href="/model-api" target="_blank" rel="noreferrer">API reference ↗</a> · <a href="/readme" target="_blank" rel="noreferrer">Installation & user guide ↗</a></p>
+    </div>
+  </section>
+  <nav id="cameraControls" class="glass" aria-label="Avatar camera controls">
+    <div class="camera-row"><button data-view="head" aria-pressed="false">Face</button><button data-view="upper" aria-pressed="true">Upper body</button><button data-view="full" aria-pressed="false">Full body</button></div>
+    <div class="camera-row"><span>Zoom</span><button data-zoom="-1" aria-label="Zoom out">&minus;</button><button data-zoom="1" aria-label="Zoom in">+</button><button id="resetCamera" title="Reset zoom and position for the current view">Reset</button></div>
+    <div class="camera-row"><span>Move avatar</span><button data-pan="-1,0" aria-label="Move avatar left">&larr;</button><button data-pan="0,1" aria-label="Move avatar up">&uarr;</button><button data-pan="0,-1" aria-label="Move avatar down">&darr;</button><button data-pan="1,0" aria-label="Move avatar right">&rarr;</button></div>
+    <p>Scroll over the avatar to zoom &middot; Right-drag to move</p>
+  </nav>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

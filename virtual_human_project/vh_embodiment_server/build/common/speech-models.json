@@ -1,0 +1,155 @@
+{
+  "release": "speech-models-v1",
+  "voices": [
+    "en/en_US/hfc_female/medium/en_US-hfc_female-medium",
+    "it/it_IT/serena/high/it_IT-serena-high",
+    "en/en_US/hfc_male/medium/en_US-hfc_male-medium",
+    "it/it_IT/riccardo/x_low/it_IT-riccardo-x_low"
+  ],
+  "models": [
+    {
+      "name": "config.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/config.json",
+      "size": 2370,
+      "hash": "e5047537059bd8f182d9ca64c470201585015187",
+      "git_blob": true,
+      "relative": "faster-whisper-small/config.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-small--config.json"
+    },
+    {
+      "name": "model.bin",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/model.bin",
+      "size": 483546902,
+      "hash": "3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+      "git_blob": false,
+      "relative": "faster-whisper-small/model.bin",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-small--model.bin"
+    },
+    {
+      "name": "tokenizer.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/tokenizer.json",
+      "size": 2203239,
+      "hash": "7818adb6de9fa3064d3ff81226fdd675be1f6344",
+      "git_blob": true,
+      "relative": "faster-whisper-small/tokenizer.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-small--tokenizer.json"
+    },
+    {
+      "name": "vocabulary.txt",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/vocabulary.txt",
+      "size": 459861,
+      "hash": "c9074644d9d1205686f16d411564729461324b75",
+      "git_blob": true,
+      "relative": "faster-whisper-small/vocabulary.txt",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-small--vocabulary.txt"
+    },
+    {
+      "name": "config.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/config.json",
+      "size": 2249,
+      "hash": "3baa18e2b321a2f489614607852a729fcd516480",
+      "git_blob": true,
+      "relative": "faster-whisper-tiny/config.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-tiny--config.json"
+    },
+    {
+      "name": "model.bin",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/model.bin",
+      "size": 75538270,
+      "hash": "dcb76c6586fc06cbdac6dd21f14cfd129cc4cdd9dce19bf4ffa62e59cbe6e6d1",
+      "git_blob": false,
+      "relative": "faster-whisper-tiny/model.bin",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-tiny--model.bin"
+    },
+    {
+      "name": "tokenizer.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/tokenizer.json",
+      "size": 2203239,
+      "hash": "7818adb6de9fa3064d3ff81226fdd675be1f6344",
+      "git_blob": true,
+      "relative": "faster-whisper-tiny/tokenizer.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-tiny--tokenizer.json"
+    },
+    {
+      "name": "vocabulary.txt",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/vocabulary.txt",
+      "size": 459861,
+      "hash": "c9074644d9d1205686f16d411564729461324b75",
+      "git_blob": true,
+      "relative": "faster-whisper-tiny/vocabulary.txt",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/faster-whisper-tiny--vocabulary.txt"
+    },
+    {
+      "name": "en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx",
+      "size": 63201294,
+      "hash": "914c473788fc1fa8b63ace1cdcdb44588f4ae523d3ab37df1536616835a140b7",
+      "git_blob": false,
+      "relative": "piper-voice-en_US-hfc_female-medium/en_US-hfc_female-medium.onnx",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-en_US-hfc_female-medium--en_US-hfc_female-medium.onnx"
+    },
+    {
+      "name": "en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx.json",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx.json",
+      "size": 5033,
+      "hash": "049160c4dc214899bd6c7dd0ff90d015d3b41cfc",
+      "git_blob": true,
+      "relative": "piper-voice-en_US-hfc_female-medium/en_US-hfc_female-medium.onnx.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-en_US-hfc_female-medium--en_US-hfc_female-medium.onnx.json"
+    },
+    {
+      "name": "it/it_IT/serena/high/it_IT-serena-high.onnx",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/serena/high/it_IT-serena-high.onnx",
+      "size": 114204024,
+      "hash": "7462fbdf03727fb4c0c161286ad538fe6436b7e4b1c3059ef52930032475955f",
+      "git_blob": false,
+      "relative": "piper-voice-it_IT-serena-high/it_IT-serena-high.onnx",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-it_IT-serena-high--it_IT-serena-high.onnx"
+    },
+    {
+      "name": "it/it_IT/serena/high/it_IT-serena-high.onnx.json",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/serena/high/it_IT-serena-high.onnx.json",
+      "size": 5252,
+      "hash": "c030f0123ae8669da691fc8f03578fc40c211a08",
+      "git_blob": true,
+      "relative": "piper-voice-it_IT-serena-high/it_IT-serena-high.onnx.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-it_IT-serena-high--it_IT-serena-high.onnx.json"
+    },
+    {
+      "name": "en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx",
+      "size": 63201294,
+      "hash": "d11e403a02bdf5a670c877b3dc56e0e1c8cece6fb30289586314dffdc0a78cb0",
+      "git_blob": false,
+      "relative": "piper-voice-en_US-hfc_male-medium/en_US-hfc_male-medium.onnx",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-en_US-hfc_male-medium--en_US-hfc_male-medium.onnx"
+    },
+    {
+      "name": "en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx.json",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx.json",
+      "size": 5033,
+      "hash": "cfca70ab72bfd9b7afa09887020a8bb00c1377aa",
+      "git_blob": true,
+      "relative": "piper-voice-en_US-hfc_male-medium/en_US-hfc_male-medium.onnx.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-en_US-hfc_male-medium--en_US-hfc_male-medium.onnx.json"
+    },
+    {
+      "name": "it/it_IT/riccardo/x_low/it_IT-riccardo-x_low.onnx",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/riccardo/x_low/it_IT-riccardo-x_low.onnx",
+      "size": 28130791,
+      "hash": "1368de15f123275a7ef951c9e5e30be0f58a032daa14a0da44037443c1d1d21b",
+      "git_blob": false,
+      "relative": "piper-voice-it_IT-riccardo-x_low/it_IT-riccardo-x_low.onnx",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-it_IT-riccardo-x_low--it_IT-riccardo-x_low.onnx"
+    },
+    {
+      "name": "it/it_IT/riccardo/x_low/it_IT-riccardo-x_low.onnx.json",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/5041a7a49ae5b3a0f30e6837769eb03fdbb231bd/it/it_IT/riccardo/x_low/it_IT-riccardo-x_low.onnx.json",
+      "size": 4161,
+      "hash": "8412958723b1007259b0dadee726cf2c00f4606e",
+      "git_blob": true,
+      "relative": "piper-voice-it_IT-riccardo-x_low/it_IT-riccardo-x_low.onnx.json",
+      "primary_url": "https://github.com/alessandropec/virtual-humans-cognitive-architectures/releases/download/speech-models-v1/piper-voice-it_IT-riccardo-x_low--it_IT-riccardo-x_low.onnx.json"
+    }
+  ]
+}
