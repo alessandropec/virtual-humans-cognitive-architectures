@@ -82,7 +82,7 @@ public sealed class SetupForm : HostForm {
     }
     static string RepositoryRoot() {
         for(var current=new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);current!=null;current=current.Parent) {
-            if(File.Exists(Path.Combine(current.FullName,"requirements.txt")) &&
+            if(File.Exists(Path.Combine(current.FullName,"virtual_human_project","requirements.txt")) &&
                File.Exists(Path.Combine(current.FullName,"virtual_human_project","vh_cognitive_architecture_server","vh_cognitive_server.py")))return current.FullName;
         }
         throw new Exception("Open this installer from inside the cloned course repository.");

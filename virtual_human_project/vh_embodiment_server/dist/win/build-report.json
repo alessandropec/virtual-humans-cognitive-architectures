@@ -1,7 +1,7 @@
 {
   "installer": "VirtualHuman-Setup.exe",
   "bytes": 14758912,
-  "sha256": "52f7658d0ebe8a67931dccbf63395a45230476793712652087b4cf5067ad0e77",
+  "sha256": "f4b93b2611129151b0b98d62d751413b508a4f7bcfd7cd9ed11211df95c97f99",
   "version": "0.1-preview",
   "signed": false,
   "python": "3.12.1",

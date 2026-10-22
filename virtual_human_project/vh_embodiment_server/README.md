@@ -32,6 +32,10 @@ Mac uses CPU; GPU acceleration is not supported.
 2. Type **Hello** and press **Send**.
 3. The avatar replies **"Hello world"**. This confirms that the application and agent are connected.
 
+![VH Embodiment Server connected, with the avatar and a Hello world reply](../docs/images/browser-ready.png)
+
+You should see **Cognitive Architecture Server connected** and **Hello world**, as above.
+
 The default mock agent always returns this fixed phrase. No LLM or API key is needed. To change the answer and build your own agent, continue to the [Agent guide](../vh_cognitive_architecture_server/README.md).
 
 You can also use the microphone: press it to record and press it again to send. **Use voice** turns the avatar's voice on or off. Closing the avatar tab shuts down the local application.

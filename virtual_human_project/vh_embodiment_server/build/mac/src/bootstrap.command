@@ -4,7 +4,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 BASE=""
 VH_SEARCH_DIR="$HERE"
 while [ "$VH_SEARCH_DIR" != / ]; do
-  if [ -f "$VH_SEARCH_DIR/requirements.txt" ] && [ -f "$VH_SEARCH_DIR/virtual_human_project/vh_cognitive_architecture_server/vh_cognitive_server.py" ]; then
+  if [ -f "$VH_SEARCH_DIR/virtual_human_project/requirements.txt" ] && [ -f "$VH_SEARCH_DIR/virtual_human_project/vh_cognitive_architecture_server/vh_cognitive_server.py" ]; then
     BASE="$VH_SEARCH_DIR/virtual_human_project/installation"; break
   fi
   VH_SEARCH_DIR="$(dirname "$VH_SEARCH_DIR")"

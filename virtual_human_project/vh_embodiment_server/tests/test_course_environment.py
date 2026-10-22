@@ -10,10 +10,10 @@ from project_paths import find_repository
 
 with tempfile.TemporaryDirectory(prefix="course root with spaces '") as directory:
     repo = Path(directory).resolve()
-    (repo / 'requirements.txt').write_text('fastapi\n')
     project = repo / 'virtual_human_project'
     installation = project / 'installation'
     installation.mkdir(parents=True)
+    (project / 'requirements.txt').write_text('fastapi\n')
     (project / 'vh_embodiment_server/dist/win').mkdir(parents=True)
     cognitive = project / 'vh_cognitive_architecture_server/vh_cognitive_server.py'
     cognitive.parent.mkdir()
@@ -34,8 +34,10 @@ with tempfile.TemporaryDirectory(prefix="course root with spaces '") as director
     assert config['agent_python'] == str(python)
     assert config['agent_script'] == str(cognitive)
     assert any(command[1:4] == ['-m', 'pip', 'install'] and cwd == repo for command, cwd in calls)
+    assert any(command[command.index('-r') + 1] == project / 'requirements.txt' for command, cwd in calls if '-r' in command)
     calls.clear()
     prepare(installation, run, Mock())
+    assert not any(command[1:3] == ['-m', 'venv'] for command, cwd in calls)
     configure(installation, config)
     assert any(command[1:4] == ['-m', 'pip', 'install'] for command, cwd in calls)
     # A broken existing folder must be retained and identified in the error.

@@ -28,8 +28,9 @@ def prepare(start, run, log):
     except Exception as exc:
         raise RuntimeError(error) from exc
     repository = find_repository(start)
-    log('Installing or completing the course notebook dependencies.')
-    run([python, '-m', 'pip', 'install', '--disable-pip-version-check', '-r', repository / 'requirements.txt', '-c', Path(start) / 'requirements.txt'], cwd=repository)
+    requirements = repository / 'virtual_human_project/requirements.txt'
+    log('Installing or completing the project and notebook dependencies.')
+    run([python, '-m', 'pip', 'install', '--disable-pip-version-check', '-r', requirements, '-c', Path(start) / 'requirements.txt'], cwd=repository)
     return python
 
 

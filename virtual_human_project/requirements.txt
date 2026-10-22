@@ -1,5 +1,26 @@
-# Python 3.12. Full course environment (installer also supports optional NVIDIA packages).
--r ../requirements.txt
+# Python 3.12: project + course dependencies. Install into an existing environment.
+# The installer creates/reuses .venv-vh-course; pip requirements alone do not create it.
+# Python 3.12 for every notebook and the virtual human server.
+# Notebooks inside VS Code
+ipykernel
+notebook
+
+# Provider SDKs: Ollama, Gemini, Groq, OpenRouter (OpenAI-compatible client)
+ollama
+google-genai
+groq
+openai
+
+# Course frameworks and provider integrations
+langchain
+langgraph
+langchain-ollama
+langchain-google-genai
+langchain-groq
+langchain-openai
+
+# Local provider key configuration
+PyYAML
 
 # Local servers and speech
 fastapi>=0.115,<1

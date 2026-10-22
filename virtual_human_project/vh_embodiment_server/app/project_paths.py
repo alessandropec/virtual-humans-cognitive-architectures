@@ -8,7 +8,7 @@ def find_repository(start):
         start = start.parent
     for folder in (start, *start.parents):
         project = folder / 'virtual_human_project'
-        if ((folder / 'requirements.txt').is_file()
+        if ((project / 'requirements.txt').is_file()
                 and (project / 'vh_embodiment_server').is_dir()
                 and (project / 'vh_cognitive_architecture_server/vh_cognitive_server.py').is_file()):
             return folder
