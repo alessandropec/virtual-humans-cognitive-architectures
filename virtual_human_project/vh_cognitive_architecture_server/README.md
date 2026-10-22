@@ -27,7 +27,12 @@ Replace that line with the module you want to run:
 | `agents.langchain_basic_agent` | Basic LangChain call |
 | `agents.langchain_structured_agent` | Structured avatar reply through LangChain |
 
-For an LLM example, copy `llm_provider_api_key.example.yaml` to `llm_provider_api_key.yaml` in this folder and enter the provider key required by that example. Keep the key file local.
+For the LLM examples:
+
+1. Duplicate `llm_provider_api_key.example.yaml` in this folder and name the new file `llm_provider_api_key.yaml`. Keep the original example unchanged.
+2. Create an [Ollama API key](https://ollama.com/settings/keys) and replace `YOUR_OLLAMA_API_KEY` in the new file with your key. Keep this file private.
+
+The Module 0 slides explain provider setup and free options. The mock agent does not need a key.
 
 After editing or switching an agent, use **Stop Cognitive Architecture Server**, then **Start Cognitive Architecture Server** in the app Settings. Send another message to try the change.
 
