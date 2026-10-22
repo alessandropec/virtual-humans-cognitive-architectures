@@ -31,6 +31,6 @@ Setup prepares the shared Python environment, both speech models and the avatar 
 
 ## Course materials
 
-Slides and notebooks follow the `Module_*/Chapter_*` structure. Open a chapter README for its slide and code links. Published materials are added to the same folders as they become available.
+Slides and notebooks follow the `Module_*/Chapter_*` structure. Open a chapter README for its slide and code links.
 
 Use VS Code with the Python and Jupyter extensions. Hosted LLM examples need your own provider key; the mock agent and API Playground do not.

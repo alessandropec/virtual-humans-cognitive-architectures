@@ -4,7 +4,7 @@ A browser avatar with chat, local speech recognition, voice, facial expressions,
 
 ## Requirements
 
-- A 64-bit Windows computer, or macOS 14+ on Apple Silicon / Intel. The Mac package is a CPU preview.
+- A 64-bit Windows computer, or macOS 14+ on Apple Silicon / Intel. On Mac, processing uses CPU; GPU acceleration is not supported.
 - A browser with WebGL and microphone support. Allow microphone access when recording.
 - Internet during installation. Speech and the Playground work locally afterward; an online LLM still needs Internet.
 
@@ -35,7 +35,7 @@ Clone or download the whole repository and extract it before starting. Keep the 
 2. Open `Install Virtual Human.app` and complete setup.
 3. Open `Virtual Human.app` in your user Applications folder.
 
-The Mac preview uses CPU. Use setup on each computer; the installed folder is not portable.
+Mac uses CPU; GPU acceleration is not supported. Use setup on each computer; the installed folder is not portable.
 
 ### What setup installs
 
@@ -191,7 +191,7 @@ An image command replaces the current image. Null preserves it. Failed image loa
 - **Missing speech models:** select their folder in Settings or continue without speech. Run setup to install missing models.
 - **Incompatible Python environment:** follow the path-specific setup error. Setup does not silently delete an existing environment.
 - **No agent reply:** check the connection indicator and **Server logs > Cognitive**. Try the mock agent first.
-- **Unsigned installer:** the preview is unsigned. Follow your operating system or institution's policy for software supplied by the course.
+- **Unsigned installer:** the installer is unsigned. Follow your operating system or institution's policy for software supplied by the course.
 
 </details>
 
