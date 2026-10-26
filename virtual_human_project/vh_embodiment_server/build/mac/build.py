@@ -49,7 +49,13 @@ def wheel_for(data, arch):
     return {'name': entry['filename'], 'url': entry['url'], 'size': entry['size'], 'hash': entry['digests']['sha256']}
 
 
+# Windows checkouts (core.autocrlf) produce CRLF; macOS bash reads "#!/bin/bash\r" and fails.
+UNIX_TEXT = {'.command', '.sh', '.py', '.txt', '.json'}
+
+
 def write(archive, name, data, mode=0o644):
+    if Path(name).suffix.lower() in UNIX_TEXT or data.startswith(b'#!'):
+        data = data.replace(b'\r\n', b'\n')
     info = zipfile.ZipInfo(name)
     info.create_system = 3
     info.external_attr = (stat.S_IFREG | mode) << 16
@@ -123,8 +129,12 @@ def build():
         assert archive.testzip() is None
         for name in (prefix + 'MacOS/Install', prefix + 'Resources/Install.command'):
             assert (archive.getinfo(name).external_attr >> 16) & 0o111 == 0o111
+            assert b'\r' not in archive.read(name), name
         with zipfile.ZipFile(io.BytesIO(archive.read(prefix + 'Resources/payload.zip'))) as payload:
             assert payload.testzip() is None
+            for name in payload.namelist():
+                if Path(name).suffix.lower() in UNIX_TEXT:
+                    assert b'\r\n' not in payload.read(name), name
             assert not {'settings.json', 'runtime.json', '.env', 'requirements-gpu.txt'} & set(payload.namelist())
             assert b'value="cuda"' not in payload.read('index.html')
     digest = hashlib.sha256(installer.read_bytes()).hexdigest()

@@ -1,6 +1,6 @@
 {
   "artifact": "VirtualHuman-Mac-CPU-preview.zip",
-  "sha256": "c6506441fadc025c2c690f2ec4c227ac4c1f7b01919fc4ebf7e5c4ef845e6d3e",
+  "sha256": "54928730abd3e59cca6414fb28691570736fe9ffefd6fdc4241b84ab0c781884",
   "platforms": [
     "macOS 14+ arm64 CPU",
     "macOS 14+ x86_64 CPU"

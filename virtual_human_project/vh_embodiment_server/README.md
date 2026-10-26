@@ -18,13 +18,17 @@ Choose **Windows or Mac** below, then continue to **Try the chat**.
 
 Next time, open `virtual_human_project/installation/VirtualHuman.exe`.
 
+> **"Windows protected your PC"?** The course installer is not signed, so SmartScreen warns about it. Click **More info**, then **Run anyway**.
+
 ### Mac
 
 1. Open `virtual_human_project/vh_embodiment_server/dist/mac/` and extract `VirtualHuman-Mac-CPU-preview.zip` there.
 2. Open **Install Virtual Human.app** and complete setup.
 3. Open **Virtual Human.app** in your user Applications folder.
 
-Mac uses CPU; GPU acceleration is not supported.
+Mac uses CPU; GPU acceleration is not supported. Keep **Install Virtual Human.app** inside `dist/mac/`: do not move it to Applications.
+
+> **"Install Virtual Human" cannot be opened / Apple could not verify it?** The course installer is not signed by Apple. Close the message, open **System Settings → Privacy & Security**, scroll down to **Security** and click **Open Anyway** next to "Install Virtual Human", then confirm with your password. If Terminal asks to access the folder that contains the repository, click **Allow**.
 
 ## Try the chat
 
@@ -194,7 +198,7 @@ An image command replaces the current image. Null preserves it. Failed image loa
 - **Missing speech models:** select their folder in Settings or continue without speech. Run setup to install missing models.
 - **Incompatible Python environment:** follow the path-specific setup error. Setup does not silently delete an existing environment.
 - **No agent reply:** check the connection indicator and **Server logs > Cognitive**. Try the mock agent first.
-- **Unsigned installer:** the installer is unsigned. Follow your operating system or institution's policy for software supplied by the course.
+- **Security warning when opening the installer:** the installers are unsigned. See the notes under [Windows](#windows) and [Mac](#mac).
 
 </details>
 
