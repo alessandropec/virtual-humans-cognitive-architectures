@@ -29,6 +29,8 @@ Next time, open `virtual_human_project/installation/VirtualHuman.exe`.
 Mac uses CPU; GPU acceleration is not supported. Keep **Install Virtual Human.app** inside `dist/mac/`: do not move it to Applications.
 
 > **"Install Virtual Human" cannot be opened / Apple could not verify it?** The course installer is not signed by Apple. Close the message, open **System Settings → Privacy & Security**, scroll down to **Security** and click **Open Anyway** next to "Install Virtual Human", then confirm with your password. If Terminal asks to access the folder that contains the repository, click **Allow**.
+>
+> **Asked to select the course folder?** macOS opened the installer from a temporary copy because the repository was downloaded from the internet. Select the downloaded course folder (the one that contains `virtual_human_project`) and the installer reopens from its real location. If it still does not start, open Terminal in `dist/mac/` and run `xattr -dr com.apple.quarantine "Install Virtual Human.app"`, then open the installer again.
 
 ## Try the chat
 

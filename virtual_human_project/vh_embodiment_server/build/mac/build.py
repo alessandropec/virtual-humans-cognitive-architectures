@@ -72,7 +72,8 @@ def build():
     bash = 'C:/Program Files/Git/bin/bash.exe' if Path('C:/Program Files/Git/bin/bash.exe').exists() else shutil.which('bash')
     if not bash:
         raise RuntimeError('Bash necessario per controllare lo script di bootstrap della build Mac.')
-    subprocess.run([bash, '-n', str(ROOT / 'build/mac/src/bootstrap.command')], check=True)
+    for script in ('bootstrap.command', 'launcher.sh'):
+        subprocess.run([bash, '-n', str(ROOT / 'build/mac/src' / script)], check=True)
     subprocess.run([sys.executable, ROOT / 'tests/test_course_environment.py'], check=True)
     for pattern in ('test_mac_package.py', 'test_*device.py', 'test_model_docs.py', 'test_installer_models.py'):
         subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', str(ROOT / 'tests'), '-p', pattern], check=True)
@@ -122,7 +123,7 @@ def build():
             'CFBundleName': 'VH Embodiment Server Setup', 'CFBundleIconFile': 'vh-icon.icns', 'CFBundlePackageType': 'APPL',
             'CFBundleShortVersionString': '0.1', 'CFBundleVersion': '1', 'LSMinimumSystemVersion': '14.0'}))
         write(archive, prefix + 'Resources/vh-icon.icns', (ROOT / 'app/assets/branding/vh-icon.icns').read_bytes())
-        write(archive, prefix + 'MacOS/Install', b'#!/bin/bash\nHERE="$(cd "$(dirname "$0")/../Resources" && pwd)"\nexec /usr/bin/open -a Terminal "$HERE/Install.command"\n', 0o755)
+        write(archive, prefix + 'MacOS/Install', (ROOT / 'build/mac/src/launcher.sh').read_bytes(), 0o755)
         write(archive, prefix + 'Resources/Install.command', (ROOT / 'build/mac/src/bootstrap.command').read_bytes(), 0o755)
         write(archive, prefix + 'Resources/payload.zip', buffer.getvalue())
     with zipfile.ZipFile(installer) as archive:
