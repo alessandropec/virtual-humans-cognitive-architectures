@@ -13,10 +13,10 @@ The project has two connected parts:
 
 ```mermaid
 flowchart LR
-    U["User / browser"]
-    E["VH Embodiment Server<br/>Whisper STT / Piper TTS<br/>Avatar / chat / whiteboard"]
-    C["VH Cognitive Architecture Server<br/>Your Python agent"]
-    L["LLM provider"]
+    U["You<br/>User / browser"]
+    E["Avatar<br/>VH Embodiment Server"]
+    C["Python agent<br/>VH Cognitive Architecture Server"]
+    L["LLM provider<br/>Model"]
 
     U -->|Text or microphone audio| E
     E -->|Voice and avatar behaviour| U

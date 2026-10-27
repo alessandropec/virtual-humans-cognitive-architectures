@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from schemas import AgentReply, ModelReply
 import vh_cognitive_server as server
-from agents.mock_agent import response as mock_response
+from agents.Module_0.Chapter_01.mock_agent import response as mock_response
 
 assert not any(name.startswith('vh_embodiment_server') for name in sys.modules)
 schema = AgentReply.model_json_schema()

@@ -29,10 +29,10 @@ with tempfile.TemporaryDirectory(prefix='vh-shutdown-test-') as directory:
     source = project / 'vh_cognitive_architecture_server'
     shutil.copy2(source / 'schemas.py', cognitive / 'schemas.py')
     code = (source / 'vh_cognitive_server.py').read_text(encoding='utf-8')
-    code = code.replace('from agents.naive_agent import response', 'from agents.mock_agent import response')
+    code = code.replace('from agents.Module_0.Chapter_01.naive_agent import response', 'from agents.Module_0.Chapter_01.mock_agent import response')
     (cognitive / 'vh_cognitive_server.py').write_text(code, encoding='utf-8')
-    (cognitive / 'agents').mkdir()
-    shutil.copy2(source / 'agents/mock_agent.py', cognitive / 'agents/mock_agent.py')
+    (cognitive / 'agents/Module_0/Chapter_01').mkdir(parents=True)
+    shutil.copy2(source / 'agents/Module_0/Chapter_01/mock_agent.py', cognitive / 'agents/Module_0/Chapter_01/mock_agent.py')
     avatar_port, cognitive_port = free_port(), free_port()
     (stage / 'settings.json').write_text(json.dumps(dict(
         agent_python=sys.executable, agent_script=str(cognitive / 'vh_cognitive_server.py'),

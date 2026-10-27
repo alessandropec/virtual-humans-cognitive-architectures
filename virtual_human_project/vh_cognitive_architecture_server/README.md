@@ -2,37 +2,50 @@
 
 Use this guide **after the avatar replies "Hello world"**. If you have not reached that step, follow the [Installation guide](../vh_embodiment_server/README.md) first.
 
-The **VH Cognitive Architecture Server** runs your Python agent. The avatar sends it the user's text, and your agent returns the answer. The connection is already set up; you only need to edit the agent code.
+The **VH Cognitive Architecture Server** runs your Python agent. The avatar sends it the user's text, and your agent returns the answer. The connection is already set up. Start by trying the supplied agents; later, edit these files to change how the avatar behaves and replies.
 
 The default `mock_agent.py` returns **"Hello world"** for every message, without an LLM or API key.
 
 ## Change the answer
 
-Start by editing [agents/mock_agent.py](agents/mock_agent.py), for example by changing its fixed phrase. Save the file, then open **Settings > Cognitive Architecture Server** in the avatar app. Click **Stop Cognitive Architecture Server**, then **Start Cognitive Architecture Server**. Send another message to see your new answer.
+Start by editing [agents/Module_0/Chapter_01/mock_agent.py](agents/Module_0/Chapter_01/mock_agent.py), for example by changing its fixed phrase. Save the file, then open **Settings > Cognitive Architecture Server** in the avatar app. Click **Stop Cognitive Architecture Server**, then **Start Cognitive Architecture Server**. Send another message to see your new answer.
 
 ## Choose another agent
+
+The [agents folder](agents/README.md) follows the course module and chapter structure. Explore an example in its notebook, then apply it in the agent for the same chapter and test it with the avatar.
+
+Edit an existing Python file in `agents/`, or copy it to create a new agent. Then change the import in `vh_cognitive_server.py` to select the file you want to run. If you only edit the already selected agent, leave its import unchanged. Save your files and restart the cognitive server.
 
 To select a different agent, open [vh_cognitive_server.py](vh_cognitive_server.py) and keep exactly one response import active:
 
 ```python
-from agents.mock_agent import response
+from agents.Module_0.Chapter_01.mock_agent import response
 ```
 
 Replace that line with the module you want to run:
 
 | Module | Behaviour |
 | --- | --- |
-| `agents.mock_agent` | Fixed reply, no LLM or key |
-| `agents.naive_agent` | Direct provider SDK call |
-| `agents.langchain_basic_agent` | Basic LangChain call |
-| `agents.langchain_structured_agent` | Structured avatar reply through LangChain |
+| `agents.Module_0.Chapter_01.mock_agent` | Fixed reply, no LLM or key |
+| `agents.Module_0.Chapter_01.naive_agent` | Direct provider SDK call |
+| `agents.Module_1.Chapter_03.langchain_basic_agent` | Basic LangChain call |
+| `agents.Module_1.Chapter_03.langchain_structured_agent` | Structured avatar reply through LangChain |
+
+For the Module 0 tutorial, choose the supplied `naive_agent.py`. It sends your message to an LLM, so the avatar gives a model-generated answer. You can try it before studying its code. Restart the cognitive server after selecting it, introduce yourself, then ask whether it remembers your name.
 
 For the LLM examples:
 
 1. Duplicate `llm_provider_api_key.example.yaml` in this folder and name the new file `llm_provider_api_key.yaml`. Keep the original example unchanged.
 2. Create an [Ollama API key](https://ollama.com/settings/keys) and replace `YOUR_OLLAMA_API_KEY` in the new file with your key. Keep this file private.
 
-The Module 0 slides explain provider setup and free options. The mock agent does not need a key.
+The file has the same name in two places:
+
+| Used by | Folder containing `llm_provider_api_key.yaml` |
+| --- | --- |
+| Notebook | `virtual_human_course/` |
+| Avatar agent | `virtual_human_project/vh_cognitive_architecture_server/` |
+
+Create the file from its example in both folders. You can paste the same Ollama key into both copies. Keep them private. The mock agent does not need a key.
 
 After editing or switching an agent, use **Stop Cognitive Architecture Server**, then **Start Cognitive Architecture Server** in the app Settings. Send another message to try the change.
 

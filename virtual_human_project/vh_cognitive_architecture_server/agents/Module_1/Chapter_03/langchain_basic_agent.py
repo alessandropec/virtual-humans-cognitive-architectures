@@ -5,7 +5,7 @@ from schemas import AgentReply
 import yaml
 
 MODEL = 'gpt-oss:120b'
-KEY_FILE = Path(__file__).resolve().parents[1] / 'llm_provider_api_key.yaml'
+KEY_FILE = Path(__file__).resolve().parents[3] / 'llm_provider_api_key.yaml'
 API_KEY = yaml.safe_load(KEY_FILE.read_text(encoding='utf-8'))['ollama']['api_key']
 
 
