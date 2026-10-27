@@ -99,11 +99,44 @@ public sealed class SetupForm : HostForm {
         Voice.Enabled=Transcription.Enabled=!Running && result.Length>0;
         Gpu.Text=result.Length>0?"Detected GPU: "+result:"No compatible NVIDIA GPU detected. Speech will use CPU.";
     }
+    // Without Windows long path support no path may exceed 259 characters.
+    const int MaxPath=259;
+    // Deepest file pip creates below virtual_human_project (jupyterlab, measured 171 with the GPU profile) plus room for new packages.
+    public const int DeepestEnvironmentPath=185;
+    const string TooLong="The course folder path is too long for Windows. Move the course folder closer to the drive root (for example C:\\VH) and run setup again.";
+    static bool LongPathsEnabled() {
+        using(var key=Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\FileSystem"))
+            return key!=null && Equals(key.GetValue("LongPathsEnabled"),1);
+    }
+    // Python packages are installed by new processes, which honour long path support once it is enabled.
+    static void CheckEnvironmentPath(string target) {
+        if(Path.GetDirectoryName(target).Length+1+DeepestEnvironmentPath<=MaxPath || LongPathsEnabled())return;
+        if(MessageBox.Show("The course folder path is long, so Windows must allow long file paths to install the Python packages.\n\n"+
+            "Enable long path support now? Windows will ask for administrator permission.\n\n"+
+            "Otherwise choose No, move the course folder closer to the drive root (for example C:\\VH) and run setup again.",
+            "Long file paths",MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)throw new Exception(TooLong);
+        try {
+            using(var p=Process.Start(new ProcessStartInfo(Path.Combine(Environment.SystemDirectory,"reg.exe"),
+                @"add HKLM\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f"){UseShellExecute=true,Verb="runas",WindowStyle=ProcessWindowStyle.Hidden}))p.WaitForExit();
+        }catch(System.ComponentModel.Win32Exception){}
+        if(!LongPathsEnabled())throw new Exception("Long path support was not enabled. "+TooLong);
+    }
+    // Resolved by full path: the PowerShell folder is sometimes missing from PATH.
+    static string PowerShell() {
+        string path=Path.Combine(Environment.SystemDirectory,@"WindowsPowerShell\v1.0\powershell.exe");
+        if(File.Exists(path))return path;
+        foreach(var folder in (Environment.GetEnvironmentVariable("PATH")??"").Split(';')) {
+            try {string candidate=Path.Combine(folder.Trim().Trim('"'),"powershell.exe");if(File.Exists(candidate))return candidate;}
+            catch(ArgumentException){}
+        }
+        throw new Exception("Windows PowerShell was not found. It is part of Windows: check that it has not been disabled, then click Retry.");
+    }
     public static void Extract(string destination) {
-        Directory.CreateDirectory(destination);
         string prefix=Path.GetFullPath(destination).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
         using(var resource=Assembly.GetExecutingAssembly().GetManifestResourceStream("app.zip"))
         using(var archive=new ZipArchive(resource,ZipArchiveMode.Read)) {
+            foreach(var item in archive.Entries)if(prefix.Length+item.FullName.Length+".setup-new".Length>MaxPath)throw new Exception(TooLong);
+            Directory.CreateDirectory(destination);
             foreach(var item in archive.Entries) {
                 string path=Path.GetFullPath(Path.Combine(prefix,item.FullName));
                 if(!path.StartsWith(prefix,StringComparison.OrdinalIgnoreCase))throw new Exception("Invalid package path.");
@@ -127,6 +160,8 @@ public sealed class SetupForm : HostForm {
             }
             var drive=new DriveInfo(Path.GetPathRoot(target));
             if(drive.AvailableFreeSpace<1024L*1024*1024)throw new Exception("At least 1 GB free is required to start. Setup checks the additional space before downloading models.");
+            CheckEnvironmentPath(target);
+            string powershell=PowerShell();
             Failure="";Heading.Text="VH Embodiment Server";Status.ForeColor=Color.Black;
             Notice.Text="Setup downloads everything now. Local speech needs no downloads during use.";Notice.ForeColor=Color.FromArgb(75,92,110);
             bool voice=Voice.Checked, transcription=Transcription.Checked;
@@ -137,7 +172,7 @@ public sealed class SetupForm : HostForm {
             string command="-NoProfile -ExecutionPolicy Bypass -File "+Quote(Path.Combine(target,"setup.ps1"))+
                 " -Yes -Profile "+(voice||transcription?"gpu":"cpu")+
                 " -VoiceDevice "+(voice?"auto":"cpu")+" -TranscriptionDevice "+(transcription?"auto":"cpu");
-            int code=await Execute("powershell.exe",command,target);
+            int code=await Execute(powershell,command,target);
             if(code!=0)throw new Exception("Installation incomplete. Open Show details, fix the issue and click Retry. Verified downloads will be reused.");
             Completed=success=true;Heading.Text="Installation complete";
             Notice.Text="Installation completed. Downloaded files have been verified.";Notice.ForeColor=Color.FromArgb(75,92,110);

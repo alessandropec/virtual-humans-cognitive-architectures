@@ -40,7 +40,7 @@ def build_package(output, work):
         if name.endswith('.py'):
             compile(source.read_text(encoding='utf-8'), str(source), 'exec')
     run([sys.executable, ROOT / 'tests/test_course_environment.py'])
-    for pattern in ('test_setup_downloads.py', 'test_*device.py', 'test_model_docs.py', 'test_installer_models.py'):
+    for pattern in ('test_setup_downloads.py', 'test_windows_paths.py', 'test_*device.py', 'test_model_docs.py', 'test_installer_models.py'):
         run([sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-p', pattern])
     if shutil.which('node'):
         for name in ('app.js', 'avatar.js', 'chat-window.js', 'assets/api-playground.js', 'assets/control-panels.js'):

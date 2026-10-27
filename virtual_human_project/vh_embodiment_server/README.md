@@ -19,6 +19,8 @@ Choose **Windows or Mac** below, then continue to **Try the chat**.
 Next time, open `virtual_human_project/installation/VirtualHuman.exe`.
 
 > **"Windows protected your PC"?** The course installer is not signed, so SmartScreen warns about it. Click **More info**, then **Run anyway**.
+>
+> **Asked to enable long file paths?** The course folder is deep (a downloaded ZIP often nests it twice), and the Python packages need longer paths than Windows allows by default. Click **Yes** and confirm the administrator prompt, or click **No**, move the course folder closer to the drive root (for example `C:\VH`) and run setup again.
 
 ### Mac
 
