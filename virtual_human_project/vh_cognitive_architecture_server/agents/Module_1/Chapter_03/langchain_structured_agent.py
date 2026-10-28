@@ -1,7 +1,9 @@
 """LangChain agent: text in, structured avatar reply out."""
 from langchain_ollama import ChatOllama
+from langchain_core.messages import SystemMessage, HumanMessage
 from schemas import AgentReply, ModelReply
 from pathlib import Path
+import json
 import yaml
 
 MODEL = 'gpt-oss:120b'
@@ -21,15 +23,16 @@ client = ChatOllama(
 
 # Ollama Cloud supports tool calling, but not native JSON-schema output.
 structured_client = client.with_structured_output(ModelReply, method='function_calling')
+FORMAT_INSTRUCTIONS = 'Return ModelReply using this schema:\n' + json.dumps(ModelReply.model_json_schema())
 
 
 def response(text: str) -> AgentReply:
     answer = structured_client.invoke([
-        ('system', 'You are a conversational virtual human. Reply briefly in the user\'s language. '
+        SystemMessage('You are a conversational virtual human. Reply briefly in the user\'s language. '
          'Always call ModelReply. Write only spoken words in speech_text. '
          'Choose catalog values from the output schema. '
          'Use null for unused emotion, expression and gesture. '
-         'Choose one gesture at a time.'),
-        ('human', text),
+         'Choose one gesture at a time.\n' + FORMAT_INSTRUCTIONS),
+        HumanMessage(text),
     ])
     return AgentReply(**answer.model_dump(), whiteboard=None)

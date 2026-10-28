@@ -8,7 +8,7 @@ from schemas import AgentRequest, AgentReply
 # Keep exactly one response import active.
 from agents.Module_0.Chapter_01.mock_agent import response
 # from agents.Module_0.Chapter_01.naive_agent import response
-# from agents.Module_1.Chapter_03.langchain_basic_agent import response
+# from agents.Module_1.Chapter_03.langchain_naive_agent import response
 # from agents.Module_1.Chapter_03.langchain_structured_agent import response
 
 app = FastAPI(title='VH Cognitive Architecture Server')

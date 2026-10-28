@@ -39,3 +39,11 @@ To program the avatar's agent, follow the [Agent guide](virtual_human_project/vh
 
 - [Slides (PDF)](virtual_human_course/Module_0/Chapter_01/Slides/Module_0_Chapter_01_Introduction_and_Setup.pdf) · [PowerPoint](virtual_human_course/Module_0/Chapter_01/Slides/Module_0_Chapter_01_Introduction_and_Setup.pptx)
 - [First-call notebook](virtual_human_course/Module_0/Chapter_01/Code/00_first_call.ipynb): try the model providers using the shared Python environment.
+
+**Module 1: Cognitive architectures, LLMs and LangChain** connects psychological memory models to context management, chains, structured avatar replies and a conversation-memory exercise.
+
+1. [Psychological Foundations of Cognitive Architectures](virtual_human_course/Module_1/Chapter_01/Slides/Module_1_Chapter_01_Psychological_Foundations.pdf)
+2. [LLMs, Working Memory and Prompting](virtual_human_course/Module_1/Chapter_02/Slides/Module_1_Chapter_02_LLMs_Working_Memory_and_Prompting.pdf)
+3. [Introduction to LangChain](virtual_human_course/Module_1/Chapter_03/Slides/Module_1_Chapter_03_Introduction_to_LangChain.pdf)
+
+The [course index](virtual_human_course/README.md) links the two Chapter 03 notebooks. Follow the slides, then open each notebook section when indicated.

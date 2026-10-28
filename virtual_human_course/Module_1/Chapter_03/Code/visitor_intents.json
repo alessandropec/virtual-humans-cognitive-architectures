@@ -1,0 +1,62 @@
+[
+  {
+    "text": "Where is the cafe?",
+    "label": "DIRECTIONS"
+  },
+  {
+    "text": "Which way is the ticket desk, and how much is admission?",
+    "label": "DIRECTIONS"
+  },
+  {
+    "text": "When do you close?",
+    "label": "HOURS"
+  },
+  {
+    "text": "When is last entry, and where is the exit?",
+    "label": "HOURS"
+  },
+  {
+    "text": "How much is a ticket?",
+    "label": "TICKETS"
+  },
+  {
+    "text": "Do students pay less, and when do you open?",
+    "label": "TICKETS"
+  },
+  {
+    "text": "Which floor has the ticket office, and is admission free?",
+    "label": "DIRECTIONS"
+  },
+  {
+    "text": "Is a family pass cheaper, and where is the shop?",
+    "label": "TICKETS"
+  },
+  {
+    "text": "Until when can we enter, and how much will we pay?",
+    "label": "HOURS"
+  },
+  {
+    "text": "Are you open after six, and which way is the cafe?",
+    "label": "HOURS"
+  },
+  {
+    "text": "How do I reach the gallery, and when does it close?",
+    "label": "DIRECTIONS"
+  },
+  {
+    "text": "Does a student pay less, and when is last admission?",
+    "label": "TICKETS"
+  },
+  {
+    "text": "Is admission included in this pass, and where is the entrance?",
+    "label": "TICKETS"
+  },
+  {
+    "text": "At what time do the doors open, and is entry free?",
+    "label": "HOURS"
+  },
+  {
+    "text": "Where do I buy a ticket, and what time do you close?",
+    "label": "DIRECTIONS"
+  }
+]

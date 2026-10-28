@@ -28,7 +28,7 @@ Replace that line with the module you want to run:
 | --- | --- |
 | `agents.Module_0.Chapter_01.mock_agent` | Fixed reply, no LLM or key |
 | `agents.Module_0.Chapter_01.naive_agent` | Direct provider SDK call |
-| `agents.Module_1.Chapter_03.langchain_basic_agent` | Basic LangChain call |
+| `agents.Module_1.Chapter_03.langchain_naive_agent` | Naive LangChain call |
 | `agents.Module_1.Chapter_03.langchain_structured_agent` | Structured avatar reply through LangChain |
 
 For the Module 0 tutorial, choose the supplied `naive_agent.py`. It sends your message to an LLM, so the avatar gives a model-generated answer. You can try it before studying its code. Restart the cognitive server after selecting it, introduce yourself, then ask whether it remembers your name.
