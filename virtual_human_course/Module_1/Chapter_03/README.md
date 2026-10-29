@@ -13,7 +13,7 @@ Open notebooks from their `Code` folder and use the course Python kernel. Each h
 
 1. Generate an answer, then review it with a second model. Replace football content with a fixed refusal and keep other text unchanged. Repeat the same chain with checking rules in system and dynamic text in human.
 2. Use message templates and a dictionary to fill static/dynamic chat prompts. Choose a speaking style and supply the current time through a chat template. Copy the style into `STYLE_PROMPT` in the naive agent and try it in the server.
-3. Tune the classifier prompt and field description. The [dataset](Code/visitor_intents.json) contains 15 labelled requests. If a request has multiple questions, classify its first question. Send all requests in one call, inspect errors and accuracy, then tune the prompt and description and rerun.
+3. Tune the classifier prompt and field description. The [dataset](Code/visitor_intents.json) contains 15 labelled requests. The starting prompt gives only the label names; the museum's label definitions are in the notebook. Send all requests in one call, inspect errors and accuracy, then tune the prompt and description and rerun.
 
 4. Keep previous human and AI messages in a list, pass the full history to each call and save the next reply. Then complete the comment-only `langchain_basic_memory_agent.py` using the naive agent as a starting point, implement the memory yourself and repeat the two turns with the avatar.
 

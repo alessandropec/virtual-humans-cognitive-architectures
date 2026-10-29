@@ -4,7 +4,15 @@
     "label": "DIRECTIONS"
   },
   {
-    "text": "Which way is the ticket desk, and how much is admission?",
+    "text": "Is there a lift to the second floor?",
+    "label": "DIRECTIONS"
+  },
+  {
+    "text": "Can I reach the terrace without stairs?",
+    "label": "DIRECTIONS"
+  },
+  {
+    "text": "Where are the toilets?",
     "label": "DIRECTIONS"
   },
   {
@@ -12,7 +20,15 @@
     "label": "HOURS"
   },
   {
-    "text": "When is last entry, and where is the exit?",
+    "text": "Is the museum open on Mondays?",
+    "label": "HOURS"
+  },
+  {
+    "text": "What time does the guided tour start?",
+    "label": "HOURS"
+  },
+  {
+    "text": "How long does a full visit take?",
     "label": "HOURS"
   },
   {
@@ -20,43 +36,27 @@
     "label": "TICKETS"
   },
   {
-    "text": "Do students pay less, and when do you open?",
+    "text": "Do students get a discount?",
     "label": "TICKETS"
   },
   {
-    "text": "Which floor has the ticket office, and is admission free?",
-    "label": "DIRECTIONS"
-  },
-  {
-    "text": "Is a family pass cheaper, and where is the shop?",
+    "text": "Where do I buy a ticket?",
     "label": "TICKETS"
   },
   {
-    "text": "Until when can we enter, and how much will we pay?",
-    "label": "HOURS"
-  },
-  {
-    "text": "Are you open after six, and which way is the cafe?",
-    "label": "HOURS"
-  },
-  {
-    "text": "How do I reach the gallery, and when does it close?",
-    "label": "DIRECTIONS"
-  },
-  {
-    "text": "Does a student pay less, and when is last admission?",
+    "text": "Where can I pick up my pre-booked tickets?",
     "label": "TICKETS"
   },
   {
-    "text": "Is admission included in this pass, and where is the entrance?",
+    "text": "When does the ticket office open?",
     "label": "TICKETS"
   },
   {
-    "text": "At what time do the doors open, and is entry free?",
-    "label": "HOURS"
+    "text": "Until what time can I buy tickets today?",
+    "label": "TICKETS"
   },
   {
-    "text": "Where do I buy a ticket, and what time do you close?",
-    "label": "DIRECTIONS"
+    "text": "Which floor is the ticket desk on?",
+    "label": "TICKETS"
   }
 ]
