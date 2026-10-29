@@ -16,6 +16,7 @@ Open notebooks from their `Code` folder and use the course Python kernel. Each h
 3. Tune the classifier prompt and field description. The [dataset](Code/visitor_intents.json) contains 15 labelled requests. The starting prompt gives only the label names; the museum's label definitions are in the notebook. Send all requests in one call, inspect errors and accuracy, then tune the prompt and description and rerun.
 
 4. Keep previous human and AI messages in a list, pass the full history to each call and save the next reply. Then complete the comment-only `langchain_basic_memory_agent.py` using the naive agent as a starting point, implement the memory yourself and repeat the two turns with the avatar.
+5. Final exercise: complete the comment-only `langchain_structured_memory_agent.py`, combining the list of messages with the structured reply, so the avatar remembers the conversation and still controls emotion, expression and gesture.
 
 Format instructions are introduced immediately after the first structured reply and included in the email, classifier and avatar prompts. Model calls, schema definitions, prompt inspection and scoring are all in notebook cells. Keep the single JSON dataset beside the notebooks. It is a small synthetic exercise, not a benchmark.
 
@@ -23,6 +24,6 @@ Format instructions are introduced immediately after the first structured reply 
 
 Notebook links open the existing [naive agent](../../../virtual_human_project/vh_cognitive_architecture_server/agents/Module_1/Chapter_03/langchain_naive_agent.py) and [structured agent](../../../virtual_human_project/vh_cognitive_architecture_server/agents/Module_1/Chapter_03/langchain_structured_agent.py).
 Select the matching import, save and restart the cognitive server. See the [Agent guide](../../../virtual_human_project/vh_cognitive_architecture_server/README.md).
-The server uses its own provider-key file. The supplied agents start without conversation memory. The final exercise asks you to create your own memory agent; a comment-only file is supplied.
+The server uses its own provider-key file. The supplied agents start without conversation memory. The exercises ask you to create your own memory agent and then an avatar agent with memory and structured replies; comment-only files are supplied.
 
 The framework comparison opens [Module 2 / Chapter 01](../../Module_2/Chapter_01/README.md), where we will revisit conversation memory using graph state and checkpoints.

@@ -11,6 +11,7 @@ During setup, first test the mock, then select the supplied naive agent and rest
 | Module 1 / Chapter 03 | [langchain_naive_agent.py](Module_1/Chapter_03/langchain_naive_agent.py) | Replace the direct SDK call with a LangChain call |
 | Module 1 / Chapter 03 | [langchain_structured_agent.py](Module_1/Chapter_03/langchain_structured_agent.py) | Return speech and avatar behaviour with structured output |
 | Module 1 / Chapter 03 | [langchain_basic_memory_agent.py](Module_1/Chapter_03/langchain_basic_memory_agent.py) | Exercise: write your memory agent in this comment-only file before selecting its import |
+| Module 1 / Chapter 03 | [langchain_structured_memory_agent.py](Module_1/Chapter_03/langchain_structured_memory_agent.py) | Final exercise: combine conversation memory with structured control of speech, emotion, expression and gesture |
 
 For example, the notebook folder `virtual_human_course/Module_1/Chapter_03/Code/` corresponds to `agents/Module_1/Chapter_03/` here. Chapters introducing concepts do not need a separate agent. Add agents to the corresponding folders as the practical chapters develop.
 
