@@ -44,7 +44,7 @@ References: [LangGraph persistence](https://docs.langchain.com/oss/python/langgr
 
 ## Final lab: coding agents and weather tools
 
-The final slides introduce tool calls, the assistant/tools loop, the whiteboard API and coding agents. Compare Claude Code and Codex, then follow the official desktop installation link and open the local project in Codex.
+The final slides introduce tool calls, the assistant/tools loop, the whiteboard API and coding agents. Compare Claude Code and Codex, then install the official OpenAI Codex extension in VS Code and use its panel with the local project.
 
 Follow the exercise in the slides after a small Codex browser-game demo in a separate folder. First create a current-weather presenter with memory and animations, leaving the whiteboard unused. Then discuss useful visual improvements, explore the API Playground and let students extend their agent with the coding agent. Save the OpenWeather key in a YAML file of your choice and give its path to the coding agent, as shown in the slides.
 
