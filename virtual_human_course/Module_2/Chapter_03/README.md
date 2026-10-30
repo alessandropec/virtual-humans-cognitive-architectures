@@ -51,3 +51,5 @@ After the Codex browser-game demo, three slides discuss the MIT essay-writing st
 The base avatar agent remains the memory example. Implement the weather extension as the final exercise.
 
 Before the final lab, follow the guided Clear conversation exercise in the slides: delete one saved thread, expose the agent hook, connect the server route and test the browser button. The final weather exercise combines memory, avatar animation and live weather.
+
+The closing slides link registration for the webinar on 3 November 2026 (17:00?18:00) and mentorship on 11 November (from 14:30), followed by the Part 2 feedback questionnaire.
