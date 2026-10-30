@@ -21,5 +21,5 @@ In Chapter 03, follow each slide block, then open the indicated section of [01: 
 **Module 2: From LLMs to virtual humans** turns agents into LangGraph graphs with conversation memory:
 
 1. [Agentic Frameworks and LangGraph](Module_2/Chapter_01/README.md): state, nodes and edges in [01: LangGraph basics](Module_2/Chapter_01/Code/01_langgraph.ipynb)
-2. [Building Stateful Agents with Memory](Module_2/Chapter_02/README.md): messages, reducers, checkpointer and threads in [01: Conversation memory](Module_2/Chapter_02/Code/01_memory.ipynb)
-3. [Integration with the Virtual Human](Module_2/Chapter_03/README.md): select the [LangGraph avatar agent](../virtual_human_project/vh_cognitive_architecture_server/agents/Module_2/Chapter_03/langgraph_avatar_agent.py) and talk to the avatar
+2. [Memory and the Virtual Human](Module_2/Chapter_02/README.md): build memory in the [notebook](Module_2/Chapter_02/Code/01_memory.ipynb), then select the [avatar agent](../virtual_human_project/vh_cognitive_architecture_server/agents/Module_2/Chapter_02/langgraph_avatar_agent.py) and test speech, gestures and Clear conversation
+3. [Tools and Coding Agents](Module_2/Chapter_03/README.md): extend the working avatar with current weather and the whiteboard using Codex

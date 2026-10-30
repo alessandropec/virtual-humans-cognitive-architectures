@@ -11,7 +11,7 @@ from agents.Module_0.Chapter_01.mock_agent import response
 # from agents.Module_0.Chapter_01.naive_agent import response
 # from agents.Module_1.Chapter_03.langchain_naive_agent import response
 # from agents.Module_1.Chapter_03.langchain_structured_agent import response
-# from agents.Module_2.Chapter_03.langgraph_avatar_agent import response
+# from agents.Module_2.Chapter_02.langgraph_avatar_agent import response
 
 app = FastAPI(title='VH Cognitive Architecture Server')
 instance = None

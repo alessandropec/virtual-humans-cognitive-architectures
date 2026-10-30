@@ -51,5 +51,5 @@ The [course index](virtual_human_course/README.md) links the two Chapter 03 note
 **Module 2: From LLMs to virtual humans** builds agents as LangGraph graphs, gives them conversation memory with a checkpointer and connects that memory to the avatar.
 
 1. [Agentic Frameworks and LangGraph](virtual_human_course/Module_2/Chapter_01/Slides/Module_2_Chapter_01_Agentic_Frameworks_and_LangGraph_Introduction.pdf)
-2. [Building Stateful Agents with Memory](virtual_human_course/Module_2/Chapter_02/Slides/Module_2_Chapter_02_Building_Stateful_Agents_with_Memory.pdf)
-3. [Integration with the Virtual Human](virtual_human_course/Module_2/Chapter_03/Slides/Module_2_Chapter_03_Integration_with_the_Virtual_Human.pdf): select the [LangGraph avatar agent](virtual_human_project/vh_cognitive_architecture_server/agents/Module_2/Chapter_03/langgraph_avatar_agent.py) and the avatar remembers the conversation.
+2. [Memory and the Virtual Human](virtual_human_course/Module_2/Chapter_02/Slides/Module_2_Chapter_02_Memory_and_the_Virtual_Human.pdf)
+3. [Tools and Coding Agents](virtual_human_course/Module_2/Chapter_03/Slides/Module_2_Chapter_03_Tools_and_Coding_Agents.pdf): extend the Chapter 02 avatar with weather tools and a whiteboard using Codex.

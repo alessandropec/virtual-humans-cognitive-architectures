@@ -35,7 +35,7 @@ FORMAT_INSTRUCTIONS = 'Return ModelReply using this schema:\n' + json.dumps(Mode
 prompt = ChatPromptTemplate.from_messages([
     SystemMessagePromptTemplate.from_template(
         'You are a conversational virtual human. Reply briefly in the user\'s language. '
-        'Always call ModelReply. Write only spoken words in speech_text. '
+        'Always call ModelReply. Write only spoken words in speech_text, without emoji, emoticons or written actions. '
         'Choose catalog values from the output schema. '
         'Use null for unused emotion, expression and gesture. '
         'Choose one gesture at a time. The current time is {current_time}.\n'

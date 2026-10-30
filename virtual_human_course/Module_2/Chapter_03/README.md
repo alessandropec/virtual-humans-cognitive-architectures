@@ -1,55 +1,24 @@
-# Integration with the Virtual Human
+# Tools and Coding Agents
 
-Connect the conversational agent with memory to the browser avatar using the [Virtual Human Project](../../../virtual_human_project/README.md).
+Extend the working [Chapter 02 avatar](../../../virtual_human_project/vh_cognitive_architecture_server/agents/Module_2/Chapter_02/langgraph_avatar_agent.py) with current weather and a whiteboard image.
 
-- [Slides](Slides/Module_2_Chapter_03_Integration_with_the_Virtual_Human.pdf)
-- [Student PowerPoint](Slides/Module_2_Chapter_03_Integration_with_the_Virtual_Human.pptx)
-- [Agent: langgraph_avatar_agent.py](../../../virtual_human_project/vh_cognitive_architecture_server/agents/Module_2/Chapter_03/langgraph_avatar_agent.py)
+- [Slides](Slides/Module_2_Chapter_03_Tools_and_Coding_Agents.pdf)
+- [Student PowerPoint](Slides/Module_2_Chapter_03_Tools_and_Coding_Agents.pptx)
 
-## What the agent does
+The avatar already has conversation memory, structured speech and animations, and Clear conversation. This chapter works directly in the project; it has no separate notebook.
 
-The agent is a LangGraph graph with one `respond` node and an `InMemorySaver` checkpointer. It combines the structured `ModelReply` from Module 1 Chapter 03 with the conversation memory from Chapter 02.
+## Sequence
 
-- The browser and the HTTP server are unchanged: the browser still sends only text.
-- The conversation thread is configured in the backend: `THREAD_ID` in the agent file. Every request continues that thread.
-- **Clear conversation** in the browser deletes the thread, so the next message starts a new conversation.
-- If the model fails or returns no structured reply, the avatar answers with a short fallback instead of an error.
-- Only the most recent `MAX_MESSAGES` are sent to the model; the full history stays in the checkpoint.
+1. Slide 2 recalls the working Chapter 02 base.
+2. Slides 3–7 explain tools and their execution loop at a high level, then show an OpenWeather request, JSON and API-key setup. Tool implementation code is added by Codex during the exercise.
+3. Slides 8–10 compare Claude Code and Codex, install the official Codex VS Code extension and create a small browser game in a separate folder.
+4. Slides 11–13 discuss AI, cognitive effort and choosing what to practise.
+5. Slides 14–16 supply the meteorologist prompt and tests. Read the Chapter 02 base and create `agents/Module_2/Chapter_03/weather_avatar_agent.py`, preserving memory and animations and leaving the board unused.
+6. Slides 17–19 introduce the Playground and whiteboard goal. Students write their own Codex prompt, providing the agent path, API documentation and the YAML key-file path.
+7. The closing slides contain references, webinar and mentorship registration, and the Part 2 feedback questionnaire.
 
-## Prompt templates
+Save the OpenWeather key in a YAML file wherever you prefer and tell Codex its path. Select the generated weather agent in `vh_cognitive_server.py`, keep one response import active and restart the cognitive server. The supplied prompt asks Codex to explain that selection and test it.
 
-The agent uses `SystemMessagePromptTemplate` for instructions with variables, `MessagesPlaceholder` for the recent conversation and `ChatPromptTemplate` to assemble them. `partial()` binds the schema instructions once; `format_messages()` supplies the current time and recent messages for each call. These templates assemble model input. `InMemorySaver` and the thread preserve conversation history.
+The public project provides the Chapter 02 memory agent. Students create the Chapter 03 weather agent during the lab; completed instructor solutions are private.
 
-## Try it
-
-1. In `vh_cognitive_architecture_server/vh_cognitive_server.py`, keep only this response import active:
-
-   ```python
-   from agents.Module_2.Chapter_03.langgraph_avatar_agent import response
-   ```
-
-2. Save, then stop and start the cognitive server in the avatar's Settings.
-3. Tell the avatar your name and favourite colour, then ask for both.
-4. Press **Clear conversation** and ask again: the avatar no longer knows them.
-
-Use the shared `virtual_human_project/.venv-vh-course` environment. The checkpointer keeps conversations in memory: restarting the cognitive server also clears them.
-
-## Your turn
-
-- Give the avatar a persona by changing the system instruction.
-- Set `MAX_MESSAGES = 4` and compare the recent model input with the saved conversation.
-- Optional: guide the gestures, for example raise a hand when greeting.
-
-References: [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence), [ChatOllama structured output](https://reference.langchain.com/python/langchain-ollama/chat_models/ChatOllama/with_structured_output).
-
-## Final lab: coding agents and weather tools
-
-The final slides introduce tool calls, the assistant/tools loop, the whiteboard API and coding agents. Compare Claude Code and Codex, then install the official OpenAI Codex extension in VS Code and use its panel with the local project.
-
-After the Codex browser-game demo, three slides discuss the MIT essay-writing study, speed versus learning, and choosing what to practise. Then follow the weather exercise. First create a current-weather presenter with memory and animations, leaving the whiteboard unused. Then discuss useful visual improvements, explore the API Playground and let students extend their agent with the coding agent. Save the OpenWeather key in a YAML file of your choice and give its path to the coding agent, as shown in the slides.
-
-The base avatar agent remains the memory example. Implement the weather extension as the final exercise.
-
-Before the final lab, follow the guided Clear conversation exercise in the slides: delete one saved thread, expose the agent hook, connect the server route and test the browser button. The final weather exercise combines memory, avatar animation and live weather.
-
-The closing slides link registration for the webinar on 3 November 2026 (17:00?18:00) and mentorship on 11 November (from 14:30), followed by the Part 2 feedback questionnaire.
+Webinar: 3 November 2026, 17:00–18:00. Mentorship: 11 November 2026, from 14:30. Registration and feedback links are in the slides.
