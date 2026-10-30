@@ -51,5 +51,3 @@ Use the [weather exercise brief](Code/weather_exercise.md) to transform the avat
 The base avatar agent remains the memory example. Implement the weather extension as the final exercise.
 
 Before the final lab, complete [Clear conversation together](Code/clear_memory_together.md): delete one saved thread, expose the agent hook, connect the server route and test the browser button. The final weather exercise combines memory, avatar animation and live weather.
-
-Before the weather lab, follow the [OpenWeather key mini tutorial](Code/openweather_setup.md): account, email verification, API keys, activation and local configuration.

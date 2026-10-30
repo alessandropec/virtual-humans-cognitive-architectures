@@ -6,7 +6,7 @@ Extend `virtual_human_project/vh_cognitive_architecture_server/agents/Module_2/C
 
 1. Follow the [official Codex desktop quickstart](https://learn.chatgpt.com/docs/quickstart), install the app for your operating system and sign in with ChatGPT. Open your local course project folder. Check [plan availability and usage](https://learn.chatgpt.com/docs/pricing) before the lab. API-key usage has separate billing. If access is unavailable, work in pairs or implement the brief manually.
 2. [Claude Code](https://code.claude.com/docs/en/overview) is another coding agent. Both can inspect files, edit code and run commands with project access. For this lab we use Codex.
-3. Follow the [mini tutorial: get and configure an OpenWeather key](openweather_setup.md). Create the account before class: activation can take up to two hours. Read the key from `openweather.api_key` in the existing local provider YAML, or from `OPENWEATHER_API_KEY` in the server environment.
+3. Create an [OpenWeather account](https://home.openweathermap.org/users/sign_up), obtain an API key and check activation and applicable limits before class. Set `OPENWEATHER_API_KEY` in the environment inherited by the cognitive server. Restart the server after changing its environment. Keep the value out of prompts, code, notebooks, logs and Git.
 4. Use the shared course Python environment. Inspect the agent, `schemas.py`, and the whiteboard API in the embodiment server README.
 
 ## Build it in this order
@@ -62,7 +62,7 @@ External icon URLs are not accepted directly. Valid URLs refer to an actual uplo
 
 ## Suggested Codex prompt
 
-> Read the selected LangGraph avatar agent, its schemas and the whiteboard API contract. Explain how prompt templates, conversation memory and structured ModelReply work. Propose a short plan to implement this weather exercise, then make changes in small steps. Add an OpenWeather tool and assistant/tools/finalize graph. Preserve response(text), clear_conversation and the existing frontend contract. Read OPENWEATHER_API_KEY from the process environment, falling back to openweather.api_key in the existing local provider YAML, without printing its value. Download the condition icon and upload it to the embodiment server before returning its local URL in AgentReply.whiteboard. Handle missing/ambiguous locations and HTTP errors. Use mocked HTTP and model clients for checks. Show the diff and explain how to run it with the existing course environment.
+> Read the selected LangGraph avatar agent, its schemas and the whiteboard API contract. Explain how prompt templates, conversation memory and structured ModelReply work. Propose a short plan to implement this weather exercise, then make changes in small steps. Add an OpenWeather tool and assistant/tools/finalize graph. Preserve response(text), clear_conversation and the existing frontend contract. Read OPENWEATHER_API_KEY from the process environment without printing its value. Download the condition icon and upload it to the embodiment server before returning its local URL in AgentReply.whiteboard. Handle missing/ambiguous locations and HTTP errors. Use mocked HTTP and model clients for checks. Show the diff and explain how to run it with the existing course environment.
 
 ## Acceptance checks and hand-in
 
