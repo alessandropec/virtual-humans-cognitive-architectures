@@ -1,6 +1,6 @@
 """LangChain agent: text in, structured avatar reply out."""
 from langchain_ollama import ChatOllama
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from schemas import AgentReply, ModelReply
 from pathlib import Path
 import json
@@ -26,13 +26,20 @@ structured_client = client.with_structured_output(ModelReply, method='function_c
 FORMAT_INSTRUCTIONS = 'Return ModelReply using this schema:\n' + json.dumps(ModelReply.model_json_schema())
 
 
+prompt = ChatPromptTemplate.from_messages([
+    SystemMessagePromptTemplate.from_template(
+        "You are a conversational virtual human. Reply briefly in the user's language. "
+        "Always call ModelReply. Put only spoken words in speech_text, no emoji or written actions. "
+        "Choose catalog values from the output schema. "
+        "Use null for unused emotion, expression and gesture. "
+        "Choose one gesture at a time.\n{format_instructions}"
+    ),
+    HumanMessagePromptTemplate.from_template('{text}'),
+]).partial(format_instructions=FORMAT_INSTRUCTIONS)
+
+
 def response(text: str) -> AgentReply:
-    answer = structured_client.invoke([
-        SystemMessage('You are a conversational virtual human. Reply briefly in the user\'s language. '
-         'Always call ModelReply. Write only spoken words in speech_text. '
-         'Choose catalog values from the output schema. '
-         'Use null for unused emotion, expression and gesture. '
-         'Choose one gesture at a time.\n' + FORMAT_INSTRUCTIONS),
-        HumanMessage(text),
-    ])
+    answer = structured_client.invoke(prompt.format_messages(text=text))
+    if answer is None:
+        answer = ModelReply(speech_text='Could you say that again?', gesture='shrug')
     return AgentReply(**answer.model_dump(), whiteboard=None)

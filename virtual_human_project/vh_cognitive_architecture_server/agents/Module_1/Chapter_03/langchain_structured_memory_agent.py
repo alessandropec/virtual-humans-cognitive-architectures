@@ -6,7 +6,8 @@
 # Write the code yourself, starting from langchain_structured_agent.py:
 # - Keep the model setup, structured_client, FORMAT_INSTRUCTIONS and the system instruction.
 # - Keep a list of messages between requests, in order.
-# - Send the system instruction followed by the whole history to structured_client.
+# - Replace the human template with MessagesPlaceholder("messages").
+# - Fill the chat template with the history and send it to structured_client.
 # - Append the user's HumanMessage before the call and AIMessage(answer.speech_text) after it:
 #   the history needs the spoken words, not the whole structured reply.
 # - If the model returns None, use a short fallback ModelReply instead of failing.

@@ -37,7 +37,7 @@ Use the shared `virtual_human_project/.venv-vh-course` environment. The checkpoi
 ## Your turn
 
 - Give the avatar a persona by changing the system instruction.
-- Set `MAX_MESSAGES = 4` and find when the avatar forgets your name.
+- Set `MAX_MESSAGES = 4` and compare the recent model input with the saved conversation.
 - Optional: guide the gestures, for example raise a hand when greeting.
 
 References: [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence), [ChatOllama structured output](https://reference.langchain.com/python/langchain-ollama/chat_models/ChatOllama/with_structured_output).

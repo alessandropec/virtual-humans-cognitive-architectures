@@ -11,7 +11,8 @@ Maintain a conversation across successive requests.
 1. From the list of messages in the Module 1 [memory exercise](../../Module_1/Chapter_03/Code/02_structured_output.ipynb) to messages in graph state. Open notebook section 1 after slide 4.
 2. A chatbot node without a checkpointer forgets between calls. Open section 2 after slide 6.
 3. A checkpointer and `thread_id` continue a conversation; a different thread is a separate conversation. Open section 3 after slide 9.
-4. A rolling buffer limits what the model sees. Open section 4 after slide 12 and complete the two-visitors exercise.
+4. Delete one thread after slide 11, using the end of section 3.
+5. A rolling buffer limits what the model sees. Open section 4 after slide 13 and complete the two-visitors exercise.
 
 Select the course Python kernel and run the cells in order. The notebook uses the same Ollama Cloud key as Module 1: `virtual_human_course/llm_provider_api_key.yaml`.
 

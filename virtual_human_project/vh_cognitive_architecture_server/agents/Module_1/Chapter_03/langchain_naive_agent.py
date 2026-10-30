@@ -1,6 +1,6 @@
 """Naive agent using LangChain: one model call, without conversation memory."""
 from langchain_ollama import ChatOllama
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from datetime import datetime
 from pathlib import Path
 from schemas import AgentReply
@@ -22,12 +22,17 @@ client = ChatOllama(
 )
 
 
+prompt = ChatPromptTemplate.from_messages([
+    SystemMessagePromptTemplate.from_template('{style} The current time is {current_time}.'),
+    HumanMessagePromptTemplate.from_template('{text}'),
+])
+
+
 def response(text: str) -> AgentReply:
-    current_time = datetime.now().strftime('%H:%M')
-    reply = client.invoke([
-        SystemMessage(STYLE_PROMPT + f' The current time is {current_time}.'),
-        HumanMessage(text),
-    ])
+    messages = prompt.format_messages(
+        style=STYLE_PROMPT, current_time=datetime.now().strftime('%H:%M'), text=text,
+    )
+    reply = client.invoke(messages)
     answer = reply.content.strip()
     return AgentReply(speech_text=answer, whiteboard=None)
 
