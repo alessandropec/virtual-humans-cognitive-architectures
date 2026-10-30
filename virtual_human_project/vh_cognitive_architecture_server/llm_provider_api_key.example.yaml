@@ -1,2 +1,6 @@
 ollama:
   api_key: YOUR_OLLAMA_API_KEY
+
+# Optional: final weather-tool exercise. Get a personal key from OpenWeather.
+openweather:
+  api_key: ""
