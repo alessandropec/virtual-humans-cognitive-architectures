@@ -46,7 +46,7 @@ References: [LangGraph persistence](https://docs.langchain.com/oss/python/langgr
 
 The final slides introduce tool calls, the assistant/tools loop, the whiteboard API and coding agents. Compare Claude Code and Codex, then follow the official desktop installation link and open the local project in Codex.
 
-Use the [weather exercise brief](Code/weather_exercise.md) to transform the avatar into a current-weather presenter. The avatar calls OpenWeather, speaks about the observation and displays its condition icon on the whiteboard. First try upload and Apply in the existing API Playground. A temperature-and-wind image card is an optional extension.
+Use the [weather exercise brief](Code/weather_exercise.md) after a small Codex browser-game demo in a separate folder. First create a current-weather presenter with memory and animations, leaving the whiteboard unused. Then discuss useful visual improvements, explore the API Playground and let students extend their agent with the coding agent. Save the OpenWeather key in a YAML file of your choice and give its path to the coding agent, as shown in the slides.
 
 The base avatar agent remains the memory example. Implement the weather extension as the final exercise.
 
