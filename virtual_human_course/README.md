@@ -17,3 +17,9 @@ After the notebook, use the [Agent guide](../virtual_human_project/vh_cognitive_
 3. [Introduction to LangChain](Module_1/Chapter_03/Slides/Module_1_Chapter_03_Introduction_to_LangChain.pdf)
 
 In Chapter 03, follow each slide block, then open the indicated section of [01: Calls, chains and chat prompts](Module_1/Chapter_03/Code/01_langchain.ipynb) or [02: Structured output and conversation memory](Module_1/Chapter_03/Code/02_structured_output.ipynb). The notebooks link to the corresponding avatar agents.
+
+**Module 2: From LLMs to virtual humans** turns agents into LangGraph graphs with conversation memory:
+
+1. [Agentic Frameworks and LangGraph](Module_2/Chapter_01/README.md): state, nodes and edges in [01: LangGraph basics](Module_2/Chapter_01/Code/01_langgraph.ipynb)
+2. [Building Stateful Agents with Memory](Module_2/Chapter_02/README.md): messages, reducers, checkpointer and threads in [01: Conversation memory](Module_2/Chapter_02/Code/01_memory.ipynb)
+3. [Integration with the Virtual Human](Module_2/Chapter_03/README.md): select the [LangGraph avatar agent](../virtual_human_project/vh_cognitive_architecture_server/agents/Module_2/Chapter_03/langgraph_avatar_agent.py) and talk to the avatar

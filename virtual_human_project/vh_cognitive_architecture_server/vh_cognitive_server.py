@@ -1,4 +1,5 @@
 """The HTTP server stays the same: select one agent import below."""
+import sys
 import json
 import asyncio
 import logging
@@ -10,6 +11,7 @@ from agents.Module_0.Chapter_01.mock_agent import response
 # from agents.Module_0.Chapter_01.naive_agent import response
 # from agents.Module_1.Chapter_03.langchain_naive_agent import response
 # from agents.Module_1.Chapter_03.langchain_structured_agent import response
+# from agents.Module_2.Chapter_03.langgraph_avatar_agent import response
 
 app = FastAPI(title='VH Cognitive Architecture Server')
 instance = None
@@ -44,7 +46,11 @@ def agent(request: AgentRequest):
 
 @app.post('/conversation/clear')
 def clear_conversation():
-    # The basic agents have no conversation memory yet.
+    # Agents with conversation memory define clear_conversation() next to response().
+    selected_agent = sys.modules[response.__module__]
+    clear_agent_memory = getattr(selected_agent, 'clear_conversation', None)
+    if callable(clear_agent_memory):
+        clear_agent_memory()
     return {'status': 'ok'}
 
 

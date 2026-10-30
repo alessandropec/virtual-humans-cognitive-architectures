@@ -12,6 +12,7 @@ During setup, first test the mock, then select the supplied naive agent and rest
 | Module 1 / Chapter 03 | [langchain_structured_agent.py](Module_1/Chapter_03/langchain_structured_agent.py) | Return speech and avatar behaviour with structured output |
 | Module 1 / Chapter 03 | [langchain_basic_memory_agent.py](Module_1/Chapter_03/langchain_basic_memory_agent.py) | Exercise: write your memory agent in this comment-only file before selecting its import |
 | Module 1 / Chapter 03 | [langchain_structured_memory_agent.py](Module_1/Chapter_03/langchain_structured_memory_agent.py) | Final exercise: combine conversation memory with structured control of speech, emotion, expression and gesture |
+| Module 2 / Chapter 03 | [langgraph_avatar_agent.py](Module_2/Chapter_03/langgraph_avatar_agent.py) | A LangGraph agent with a checkpointer: the avatar remembers the conversation; Clear conversation starts a new one |
 
 For example, the notebook folder `virtual_human_course/Module_1/Chapter_03/Code/` corresponds to `agents/Module_1/Chapter_03/` here. Chapters introducing concepts do not need a separate agent. Add agents to the corresponding folders as the practical chapters develop.
 
@@ -23,6 +24,6 @@ from agents.Module_1.Chapter_03.langchain_naive_agent import response
 
 Keep exactly one response import active. After saving, stop and start the cognitive server in the avatar's Settings.
 
-Every agent keeps the same `response(text: str) -> AgentReply` interface. The server routes and `schemas.py` remain shared. Provider keys stay in `vh_cognitive_architecture_server/llm_provider_api_key.yaml`, outside the module/chapter folders; notebook keys stay in `virtual_human_course/llm_provider_api_key.yaml`.
+Every agent keeps the same `response(text: str) -> AgentReply` interface. Agents with conversation memory can also define `clear_conversation()`; the server calls it when the browser clears the conversation. The server routes and `schemas.py` remain shared. Provider keys stay in `vh_cognitive_architecture_server/llm_provider_api_key.yaml`, outside the module/chapter folders; notebook keys stay in `virtual_human_course/llm_provider_api_key.yaml`.
 
 See the [Agent guide](../README.md) for configuration and switching agents.

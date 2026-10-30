@@ -12,6 +12,7 @@ openai
 # Course frameworks and provider integrations
 langchain
 langgraph
+grandalf
 langchain-ollama
 langchain-google-genai
 langchain-groq
