@@ -12,6 +12,7 @@ using System.Collections.Generic;
 public sealed class SetupForm : HostForm {
     TextBox Folder=new TextBox();
     CheckBox Voice=new CheckBox(), Transcription=new CheckBox(), Launch=new CheckBox();
+    CheckBox SttModels=new CheckBox(), TtsModels=new CheckBox();
     Label Gpu=new Label(), Notice=new Label(), Status=new Label();
     string Failure="";
     Button Details=new Button();
@@ -25,7 +26,10 @@ public sealed class SetupForm : HostForm {
         Controls.Add(new Label{Text="Application and speech models  >  installation/",Left=28,Top=159,Width=734});
         Controls.Add(new Label{Text="Shared Python environment  >  .venv-vh-course/",Left=28,Top=194,Width=734});
         Controls.Add(new Label{Text="The same environment runs both servers and the course notebooks.",Left=28,Top=221,Width=734,ForeColor=Color.FromArgb(75,92,110)});
-        Controls.Add(new Label{Text="Speech recognition: Whisper Small + Tiny.\nVoices: English and Italian, female and male (four Piper models).",Left=28,Top=265,Width=734,Height=48});
+        // Optional speech models: without them the app works by text and disables the matching controls.
+        SttModels.SetBounds(28,258,734,26);SttModels.Text="Speech recognition models: Whisper Small + Tiny (about 0.55 GB) - needed for the microphone";SttModels.Checked=true;
+        TtsModels.SetBounds(28,286,734,26);TtsModels.Text="Avatar voices: English and Italian, female and male (about 0.27 GB) - needed to hear the avatar";TtsModels.Checked=true;
+        Controls.AddRange(new Control[]{SttModels,TtsModels});
         Controls.Add(new Label{Text="Application folder (inside virtual_human_project)",Left=28,Top=327,Width=734});
         Folder.SetBounds(28,354,734,56);
         Folder.Text=Path.Combine(RepositoryRoot(),"virtual_human_project","installation");
@@ -58,6 +62,14 @@ public sealed class SetupForm : HostForm {
     protected override void Log(string message) {
         if(IsDisposed)return;
         if(InvokeRequired){BeginInvoke(new Action<string>(Log),message);return;}
+        if(message!=null && message.StartsWith("PROGRESS ")) {
+            int percent;
+            if(int.TryParse(message.Substring(9).Trim(),out percent)) {
+                Progress.Style=ProgressBarStyle.Blocks;Progress.Value=Math.Max(0,Math.Min(100,percent));
+                Heading.Text="Installing... "+Progress.Value+"%";
+            }
+            return;
+        }
         base.Log(message);
         if(!Running || message==null)return;
         if(message.StartsWith("Download ") && !message.StartsWith("Download retry") && !message.StartsWith("Download failed"))Status.Text="Downloading "+message.Substring(9);
@@ -165,13 +177,14 @@ public sealed class SetupForm : HostForm {
             Failure="";Heading.Text="VH Embodiment Server";Status.ForeColor=Color.Black;
             Notice.Text="Setup downloads everything now. Local speech needs no downloads during use.";Notice.ForeColor=Color.FromArgb(75,92,110);
             bool voice=Voice.Checked, transcription=Transcription.Checked;
-            Running=true;MainButton.Enabled=false;Voice.Enabled=Transcription.Enabled=false;
-            ExitButton.Text="Cancel";Progress.Style=ProgressBarStyle.Marquee;
+            Running=true;MainButton.Enabled=false;Voice.Enabled=Transcription.Enabled=false;SttModels.Enabled=TtsModels.Enabled=false;
+            ExitButton.Text="Cancel";Progress.Style=ProgressBarStyle.Blocks;Progress.Value=0;
             Log("Preparing files in "+target);
             await Task.Run(()=>Extract(target));
             string command="-NoProfile -ExecutionPolicy Bypass -File "+Quote(Path.Combine(target,"setup.ps1"))+
                 " -Yes -Profile "+(voice||transcription?"gpu":"cpu")+
-                " -VoiceDevice "+(voice?"auto":"cpu")+" -TranscriptionDevice "+(transcription?"auto":"cpu");
+                " -VoiceDevice "+(voice?"auto":"cpu")+" -TranscriptionDevice "+(transcription?"auto":"cpu")+
+                " -TranscriptionModels "+(SttModels.Checked?"yes":"no")+" -VoiceModels "+(TtsModels.Checked?"yes":"no");
             int code=await Execute(powershell,command,target);
             if(code!=0)throw new Exception("Installation incomplete. Open Show details, fix the issue and click Retry. Verified downloads will be reused.");
             Completed=success=true;Heading.Text="Installation complete";
@@ -192,7 +205,7 @@ public sealed class SetupForm : HostForm {
             Notice.Text="Downloaded files are kept. Nothing needs to be deleted.";Notice.ForeColor=Color.Firebrick;
             Status.Text=Failure.Length>0?Failure:"Setup could not finish. See details, then click Retry.";if(!Expanded)ToggleDetails();MainButton.Text="Retry";}
         finally {
-            Running=false;MainButton.Enabled=true;Progress.Style=ProgressBarStyle.Blocks;Progress.Value=success?100:0;
+            Running=false;MainButton.Enabled=true;SttModels.Enabled=TtsModels.Enabled=!success;Progress.Style=ProgressBarStyle.Blocks;Progress.Value=success?100:0;
         }
         if(!success)await Detect();
     }

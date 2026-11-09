@@ -14,6 +14,10 @@ let warmingModels = false;
 let blockingLoads = 0;
 let withoutSpeechModels = false;
 let needsSpeechChoice = false;
+// Optional at setup: each channel is available only when its models are installed.
+let sttAvailable = true, ttsAvailable = true;
+const NO_STT = 'Speech recognition is not installed. Run setup again and select it to use the microphone.';
+const NO_TTS = 'Avatar voices are not installed. Run setup again and select them to hear the avatar.';
 let warmupPromise = null;
 let selectedMicrophone = localStorage.getItem('virtual-human-v2-microphone') || '';
 if(selectedMicrophone==='default')selectedMicrophone='';
@@ -78,15 +82,17 @@ function refreshControls() {
   $('#character').disabled = !avatar || (busy || warmingModels) || recording;
   playground?.setAvailable(Boolean(avatar && apiConnected && !busy && !warmingModels && !needsSpeechChoice && !recording));
   $('#send').disabled = needsSpeechChoice || !avatar || (busy || warmingModels) || recording;
-  $('#mic').disabled = withoutSpeechModels || needsSpeechChoice || !avatar || (busy || warmingModels) || preparingMicrophone || savingTranscription;
+  $('#mic').disabled = !sttAvailable || withoutSpeechModels || needsSpeechChoice || !avatar || (busy || warmingModels) || preparingMicrophone || savingTranscription;
   $('#text').disabled = needsSpeechChoice || !avatar || (busy || warmingModels) || recording;
   $('#clearConversation').disabled = !avatar || (busy || warmingModels) || recording;
-  $('#liveTranscription').disabled = !avatar || (busy || warmingModels) || recording || savingTranscription;
-  $('#ttsDevice').disabled = !avatar || (busy || warmingModels) || recording || savingTranscription;
-  $('#testTtsDevice').disabled = withoutSpeechModels || needsSpeechChoice || !avatar || (busy || warmingModels) || recording || savingTranscription;
-  $('#sttDevice').disabled = !avatar || (busy || warmingModels) || recording || savingTranscription;
-  $('#sttModel').disabled = !avatar || (busy || warmingModels) || recording || savingTranscription;
-  for (const id of ['microphone','refreshMicrophones','testMicrophone']) $( '#' + id).disabled = !avatar || (busy || warmingModels) || recording;
+  $('#liveTranscription').disabled = !sttAvailable || !avatar || (busy || warmingModels) || recording || savingTranscription;
+  $('#ttsDevice').disabled = !ttsAvailable || !avatar || (busy || warmingModels) || recording || savingTranscription;
+  $('#testTtsDevice').disabled = !ttsAvailable || withoutSpeechModels || needsSpeechChoice || !avatar || (busy || warmingModels) || recording || savingTranscription;
+  $('#sttDevice').disabled = !sttAvailable || !avatar || (busy || warmingModels) || recording || savingTranscription;
+  $('#sttModel').disabled = !sttAvailable || !avatar || (busy || warmingModels) || recording || savingTranscription;
+  for (const id of ['microphone','refreshMicrophones','testMicrophone']) $( '#' + id).disabled = !sttAvailable || !avatar || (busy || warmingModels) || recording;
+  if(!ttsAvailable){$('#speechEnabled').disabled=true;$('#chatSpeechEnabled').disabled=true;}
+  if(!sttAvailable){$('#mic').title=NO_STT;$('#mic').setAttribute('aria-label',NO_STT);}
 
 }
 function setBusy(value) { busy = value; $('#conversation').setAttribute('aria-busy',String(value)); refreshControls(); }
@@ -171,13 +177,16 @@ function showModelHint() {
     medium:'Medium: usually fewer errors than Small; slower updates and more memory.',
     'large-v3':'Large v3: aims for the highest accuracy; slow and memory-intensive on CPU.',
   };
-  $('#sttModelHint').textContent=hints[$('#sttModel').value] || 'No model available. Run the installer again.';
+  $('#sttModelHint').textContent=!sttAvailable?NO_STT:hints[$('#sttModel').value] || 'No model available. Run the installer again.';
 }
 async function refreshInstalledModels() {
   const result=await request('/api/models',undefined,'GET');
+  sttAvailable=result.installed.length>0;ttsAvailable=result.voices!==false;
+  if(!ttsAvailable)$('#ttsDeviceStatus').textContent=NO_TTS;
+  showModelHint();refreshControls();
   const model=$('#sttModel');
   model.replaceChildren(...result.installed.map(name=>new Option(name==='small'?'Small — balanced speed and accuracy':'Tiny — use this with limited computer resources',name)));
-  if(!result.installed.includes(config.stt_model))model.append(new Option('Model unavailable — run the installer again',config.stt_model));
+  if(sttAvailable && !result.installed.includes(config.stt_model))model.append(new Option('Model unavailable — run the installer again',config.stt_model));
   model.value=config.stt_model;showModelHint();
 }
 function message(role, text) {
@@ -198,7 +207,7 @@ function showPending(text) {
   pendingLabel.textContent=text; status.textContent='';$('#messages').scrollTop=$('#messages').scrollHeight;
 }
 function applySpeechMode() {
-  const enabled=config.speech_enabled!==false;
+  const enabled=ttsAvailable && config.speech_enabled!==false;
   $('#speechEnabled').checked=enabled; $('#chatSpeechEnabled').checked=enabled; avatar?.setSpeechEnabled(enabled);
   refreshControls();
 }
@@ -263,7 +272,7 @@ function statsRows(container, entries){
   container.append(list);
 }
 function micLabel(recording){
-  $('#mic').textContent='';$('#mic').title=recording?'Stop recording and send':'Start microphone';$('#mic').setAttribute('aria-label',$('#mic').title);
+  $('#mic').textContent='';$('#mic').title=!sttAvailable?NO_STT:recording?'Stop recording and send':'Start microphone';$('#mic').setAttribute('aria-label',$('#mic').title);
 }
 function addRecording(line, audio) {
   const details=document.createElement('details'), summary=document.createElement('summary'), player=document.createElement('audio');
@@ -314,9 +323,9 @@ function showVoiceDevice(result) {
 }
 async function refreshVoiceDevice() {
   loading('#ttsDeviceStatus',true,'Checking speech device…');
-  try {showVoiceDevice(await request('/api/speech/device',undefined,'GET',15000));}
-  catch(error) {$('#ttsDeviceStatus').textContent='Check failed: '+error.message;}
-  finally {loading('#ttsDeviceStatus',false);}
+  try {const result=await request('/api/speech/device',undefined,'GET',15000);if(ttsAvailable)showVoiceDevice(result);}
+  catch(error) {if(ttsAvailable)$('#ttsDeviceStatus').textContent='Check failed: '+error.message;}
+  finally {loading('#ttsDeviceStatus',false);if(!ttsAvailable)$('#ttsDeviceStatus').textContent=NO_TTS;}
 }
 void refreshVoiceDevice();
 $('#ttsDevice').addEventListener('change',safe(async()=>{
@@ -327,7 +336,7 @@ $('#ttsDevice').addEventListener('change',safe(async()=>{
     config=await request('/api/settings',{...config,tts_device:$('#ttsDevice').value},'PUT');
     await refreshVoiceDevice();await warmModels();
   } catch(error) {$('#ttsDevice').value=config.tts_device||'cpu';$('#ttsDeviceStatus').textContent=error.message;}
-  finally {finishUpdate();loading('#ttsDeviceStatus',false);savingTranscription=false;refreshControls();$('#saveSettings').disabled=false;$('#speechEnabled').disabled=false;}
+  finally {finishUpdate();loading('#ttsDeviceStatus',false);savingTranscription=false;refreshControls();$('#saveSettings').disabled=false;$('#speechEnabled').disabled=!ttsAvailable;}
 }));
 $('#testTtsDevice').addEventListener('click',safe(async()=>{
   const finishLoading=blockLoading('Warming up the selected voice...');
@@ -424,7 +433,7 @@ function saveSettings(waitModels=true) {
     config=await request('/api/settings',next,'PUT');
     $('#settingsMessage').textContent='Settings saved'; await refreshInstalledModels();connectionLabel();applySpeechMode();if(waitModels)await warmModels();
   } catch(error) { $('#settingsMessage').textContent=error.message; throw error; }
-  finally { finishUpdate();loading('#settingsMessage',false); $('#saveSettings').disabled=false;$('#speechEnabled').disabled=false; }
+  finally { finishUpdate();loading('#settingsMessage',false); $('#saveSettings').disabled=false;$('#speechEnabled').disabled=!ttsAvailable; }
   });
   return settingsSave;
 }
@@ -445,7 +454,7 @@ async function saveTranscriptionSettings() {
   } catch(error) {
     $('#liveTranscription').checked=config.live_transcription!==false;
     $('#sttModel').value=config.stt_model||'small';$('#sttDevice').value=config.stt_device||'auto';showModelHint();$('#settingsMessage').textContent=error.message;
-  } finally {finishUpdate();loading('#settingsMessage',false);savingTranscription=false;refreshControls();$('#saveSettings').disabled=false;$('#speechEnabled').disabled=false;}
+  } finally {finishUpdate();loading('#settingsMessage',false);savingTranscription=false;refreshControls();$('#saveSettings').disabled=false;$('#speechEnabled').disabled=!ttsAvailable;}
 }
 $('#liveTranscription').addEventListener('change',saveTranscriptionSettings);
 $('#sttModel').addEventListener('change',saveTranscriptionSettings);
@@ -459,7 +468,7 @@ async function saveSpeechMode(event){
     config=await request('/api/settings',{...config,speech_enabled:enabled},'PUT');
     applySpeechMode();$('#settingsMessage').textContent=enabled?'Speech enabled':'Speech disabled';await warmModels();
   } catch(error) {avatar?.setSpeechEnabled(previous);applySpeechMode();throw error;}
-  finally {finishUpdate();$('#chatSpeechEnabled').disabled=false;$('#speechEnabled').disabled=false;$('#saveSettings').disabled=false;}
+  finally {finishUpdate();$('#chatSpeechEnabled').disabled=!ttsAvailable;$('#speechEnabled').disabled=!ttsAvailable;$('#saveSettings').disabled=false;}
 }
 for(const id of ['speechEnabled','chatSpeechEnabled']) $('#'+id).addEventListener('change',safe(saveSpeechMode));
 
@@ -516,7 +525,7 @@ try {
   $('#sttModel').value=config.stt_model||'small';$('#sttDevice').value=config.stt_device||'auto';showModelHint();
   $('#speechEnabled').checked=config.speech_enabled!==false;
   $('#ttsDevice').value=config.tts_device||'cpu';
-  $('#speechEnabled').disabled=false;$('#saveSettings').disabled=false;
+  $('#speechEnabled').disabled=!ttsAvailable;$('#saveSettings').disabled=false;
   await refreshAgentStatus();
   loading('#status',true,'Loading avatar and lip-sync…');
   await refreshInstalledModels();

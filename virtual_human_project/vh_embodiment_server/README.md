@@ -13,8 +13,9 @@ Choose **Windows or Mac** below, then continue to **Try the chat**.
 ### Windows
 
 1. In the downloaded repository, open `virtual_human_project/vh_embodiment_server/dist/win/VirtualHuman-Setup.exe`.
-2. If setup detects an NVIDIA GPU, you can enable acceleration for voice and transcription. Otherwise leave CPU selected.
-3. Click **Install**. Leave **Launch after installation** checked: the avatar opens when setup finishes.
+2. Choose the speech models. Both are selected by default: **speech recognition** (about 0.55 GB) is needed for the microphone, **avatar voices** (about 0.27 GB) to hear the avatar. Without them the text chat works and the related controls stay disabled; run setup again later to add them.
+3. If setup detects an NVIDIA GPU, you can enable acceleration for voice and transcription. Otherwise leave CPU selected.
+4. Click **Install**. Leave **Launch after installation** checked: the avatar opens when setup finishes.
 
 Next time, open `virtual_human_project/installation/VirtualHuman.exe`.
 
@@ -199,6 +200,8 @@ An image command replaces the current image. Null preserves it. Failed image loa
 <summary>Troubleshooting</summary>
 
 - **Interrupted download:** retry setup. Verified files are reused; do not delete the installation or environment to fix a network error.
+- **Python setup failed (Windows):** setup prepares its own Python 3.12 in `installation/.python`. If an antivirus or a sync folder (OneDrive, Dropbox) blocks it, follow the message in **Show details**: allow the folder or move the course closer to the drive root (for example `C:\VH`), then click **Retry**.
+- **Microphone or voice disabled:** the matching speech models were not selected during setup. Run setup again and select them; downloaded files are reused.
 - **Missing speech models:** select their folder in Settings or continue without speech. Run setup to install missing models.
 - **Incompatible Python environment:** follow the path-specific setup error. Setup does not silently delete an existing environment.
 - **No agent reply:** check the connection indicator and **Server logs > Cognitive**. Try the mock agent first.

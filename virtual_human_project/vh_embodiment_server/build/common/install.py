@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -25,8 +26,13 @@ class GPUSetupError(RuntimeError):
     """GPU unavailable or its speech verification failed."""
 
 
+_bar = None  # active Progress, advanced a little for each package pip reports
+
+
 def log(message):
     print(message, flush=True)
+    if _bar and _bar.cap and str(message).startswith(('Collecting ', 'Processing ', 'Downloading ')):
+        _bar.creep()
     with (SETUP / 'install.log').open('a', encoding='utf-8') as output:
         output.write(f'{time.strftime("%Y-%m-%d %H:%M:%S")} {message}\n')
 
@@ -68,13 +74,55 @@ def wheel(requirement):
             'hash': entry['digests']['sha256']}
 
 
-def model_plan(model):
+def model_plan(model, voices=True):
     selected = [model] if isinstance(model, str) else model
     manifest = json.loads(Path(__file__).with_name('speech-models.json').read_text(encoding='utf-8'))
     if manifest['voices'] != list(VOICE_SOURCES.values()):
         raise RuntimeError('The speech model manifest must match the configured voices.')
-    return [item for item in manifest['models'] if not item['relative'].startswith('faster-whisper-')
+    return [item for item in manifest['models']
+            if (item['relative'].startswith('piper-voice-') and voices)
             or any(item['relative'].startswith(f'faster-whisper-{name}/') for name in selected)]
+
+
+class Progress:
+    """Overall percentage for the setup window: downloads by bytes, later phases by fixed weight."""
+    DOWNLOADS = 60  # downloads end here; course environment 60-85, package install 85-92, checks 92-100
+
+    def __init__(self, total_bytes):
+        self.total = total_bytes
+        self.done = 0
+        self.last = -1
+        self.cap = 0  # upper bound for creep() during phases without byte counts
+        self.position = 0.0
+
+    def phase(self, start, end):
+        self.emit(start)
+        self.position, self.cap = float(start), end - 1
+
+    def creep(self):
+        self.position = min(self.cap, self.position + 0.4)
+        self.emit(self.position)
+
+    def emit(self, percent):
+        percent = max(self.last, min(100, int(percent)))
+        if percent != self.last:
+            self.last = percent
+            print(f'PROGRESS {percent}', flush=True)
+
+    def reporter(self):
+        """Wrap the download log: lines with 'x/y MB' update the bar for the current file."""
+        def report(message):
+            log(message)
+            match = re.search(r'([\d.]+)/([\d.]+) MB', message)
+            if match and self.total:
+                current = float(match.group(1)) * 1024**2
+                self.emit(5 + (self.DOWNLOADS - 5) * min(1, (self.done + current) / self.total))
+        return report
+
+    def finished(self, item):
+        self.done += item['size']
+        if self.total:
+            self.emit(5 + (self.DOWNLOADS - 5) * min(1, self.done / self.total))
 
 
 def nvidia():
@@ -165,7 +213,9 @@ def install(args):
         chosen = input(f'Model folder [{models}] (Enter to confirm): ').strip().strip('"')
         if chosen:
             models = Path(chosen).expanduser().resolve()
-    selected_models = list(STT_MODELS)
+    # Both default to yes, also for callers that predate these options.
+    selected_models = list(STT_MODELS) if getattr(args, 'transcription_models', 'yes') == 'yes' else []
+    voices = getattr(args, 'voice_models', 'yes') == 'yes'
     selected_model = 'small'
     runtime = course_environment.environment(ROOT)
     python = runtime / 'Scripts/python.exe'
@@ -180,18 +230,20 @@ def install(args):
     if plan.get('requirements') != wanted or plan.get('voices') != list(VOICE_SOURCES.values()):
         with ThreadPoolExecutor(max_workers=4) as pool:
             wheels = list(pool.map(wheel, wanted))
-        plan = {'requirements': wanted, 'wheels': wheels, 'models': model_plan(selected_models),
+        plan = {'requirements': wanted, 'wheels': wheels, 'models': model_plan(selected_models, voices),
                 'voices': list(VOICE_SOURCES.values())}
         atomic_json(plan_path, plan)
     # Always use the pinned course models and current primary/backup download sources.
-    plan['models'] = model_plan(selected_models)
+    plan['models'] = model_plan(selected_models, voices)
     missing_wheels = [item for item in plan['wheels'] if not valid(WHEELS / item['name'], item)]
     missing_models = [item for item in plan['models'] if not valid(models / item['relative'], item)]
     wheel_bytes = sum(item['size'] for item in missing_wheels)
     model_bytes = sum(item['size'] for item in missing_models)
     # Conservative unpack/install allowance, distinct from network transfer size.
     runtime_space = wheel_bytes + 4 * sum(item['size'] for item in plan['wheels']) + 512 * 1024**2
-    log(f'Profile {args.profile.upper()} | Whisper {", ".join(selected_models)} | Italian + English voices')
+    log(f'Profile {args.profile.upper()} | Speech recognition: '
+        + (f'Whisper {", ".join(selected_models)}' if selected_models else 'not installed')
+        + ' | Voices: ' + ('Italian + English' if voices else 'not installed'))
     log(f'Runtime: {runtime}\nModels: {models}\nRemaining downloads: {(wheel_bytes + model_bytes) / 1024**3:.2f} GB '
         '(compatible partial files are resumed).')
     log(f'Estimated disk space: runtime/cache {runtime_space / 1024**3:.2f} GB + models {model_bytes / 1024**3:.2f} GB, '
@@ -215,21 +267,32 @@ def install(args):
         if str(python).lower() in probe.stdout.lower():
             raise RuntimeError('This runtime is in use. Close its server before repair or update.')
     WHEELS.mkdir(exist_ok=True)
+    global _bar
+    bar = _bar = Progress(wheel_bytes + model_bytes)
+    bar.emit(5)
     for index, item in enumerate(plan['wheels'], 1):
         log(f'[Package {index}/{len(plan["wheels"])}]')
-        download(item, WHEELS / item['name'], log)
+        download(item, WHEELS / item['name'], bar.reporter())
+        if item in missing_wheels:
+            bar.finished(item)
     for index, item in enumerate(plan['models'], 1):
         log(f'[Model/file {index}/{len(plan["models"])}]')
-        download(item, models / item['relative'], log)
+        download(item, models / item['relative'], bar.reporter())
+        if item in missing_models:
+            bar.finished(item)
+    bar.phase(Progress.DOWNLOADS, 85)
     course_environment.prepare(ROOT, run, log)
+    bar.phase(85, 92)
     # CPU and GPU ONNX packages share files. Remove the other variant first.
     run([python, '-m', 'pip', 'uninstall', '-y', 'onnxruntime' if args.profile == 'gpu' else 'onnxruntime-gpu'])
     log('Installing verified files without additional downloads…')
     run([python, '-m', 'pip', 'install', '--no-index', '--no-deps', '--disable-pip-version-check',
          *[WHEELS / item['name'] for item in plan['wheels']]])
+    bar.phase(92, 100)
     log('Checking imports, dependencies and real speech inference…')
     try:
         run([python, ROOT / 'verify_install.py', '--profile', args.profile, '--models', models, '--model', *selected_models,
+             *([] if voices else ['--no-voices']),
              '--voice-device', 'cuda' if args.voice_device == 'auto' else 'cpu',
              '--transcription-device', 'cuda' if args.transcription_device == 'auto' else 'cpu'])
     except RuntimeError as exc:
@@ -253,6 +316,7 @@ def install(args):
     atomic_json(config_path, config)
     atomic_json(ROOT / 'runtime.json', {'python': os.path.relpath(python, ROOT), 'profile': args.profile, 'models': selected_models})
     atomic_json(ROOT / 'setup-result.json', {'profile': args.profile})
+    bar.emit(100)
     log('Embodiment runtime verified.')
     return True
 
@@ -263,6 +327,10 @@ if __name__ == '__main__':
     parser.add_argument('--models-dir')
     parser.add_argument('--voice-device', choices=['cpu', 'auto'])
     parser.add_argument('--transcription-device', choices=['cpu', 'auto'])
+    parser.add_argument('--transcription-models', choices=['yes', 'no'], default='yes',
+                        help='Download Whisper speech recognition models (about 0.55 GB)')
+    parser.add_argument('--voice-models', choices=['yes', 'no'], default='yes',
+                        help='Download the four Piper avatar voices (about 0.27 GB)')
     parser.add_argument('--plan', action='store_true', help='Only metadata and space checks')
     parser.add_argument('--yes', action='store_true', help='Accept the displayed plan without interactive prompts')
     try:

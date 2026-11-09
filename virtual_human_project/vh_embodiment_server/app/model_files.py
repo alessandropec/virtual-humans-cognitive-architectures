@@ -24,6 +24,16 @@ def require_whisper(folder):
     return folder
 
 
+def voices_installed(directory):
+    """True when all four Piper voices are complete: setup installs them together."""
+    for source in VOICE_SOURCES.values():
+        stem = source.rsplit('/', 1)[1]
+        path = Path(directory) / f'piper-voice-{stem}' / f'{stem}.onnx'
+        if not path.is_file() or not Path(str(path) + '.json').is_file():
+            return False
+    return True
+
+
 def voice_path(settings):
     stem = VOICE_SOURCES[f'{settings.character}_{settings.language}'].rsplit('/', 1)[1]
     path = Path(settings.models_dir) / f'piper-voice-{stem}' / f'{stem}.onnx'

@@ -3,6 +3,7 @@ import asyncio
 from pathlib import Path
 from starlette.concurrency import run_in_threadpool
 import speech
+from model_files import installed_whisper, voices_installed
 import tts_device
 
 
@@ -55,6 +56,12 @@ class ModelWarmup:
             ):
                 if channel == 'voice' and not settings.speech_enabled:
                     continue
+                # Optional at setup: a channel without models stays off instead of failing.
+                folder = speech.models_path(settings)
+                if channel == 'transcription' and not installed_whisper(folder):
+                    continue
+                if channel == 'voice' and not voices_installed(folder):
+                    continue
                 if self.loaded.get(channel) == key:
                     continue
                 if self.keys(self.settings()) == keys:
@@ -73,6 +80,13 @@ class ModelWarmup:
                                'message': 'Model warmup failed. Check Settings and installed models.' if errors else 'Speech models ready.',
                                'errors': errors, 'missing': missing,
                                'models_dir': str(speech.models_path(settings))}
+                folder = speech.models_path(settings)
+                if not errors and not installed_whisper(folder) and not voices_installed(folder):
+                    self.status['message'] = 'Ready for text chat. Speech models are not installed.'
+                elif not errors and not installed_whisper(folder):
+                    self.status['message'] = 'Voice ready. Speech recognition is not installed.'
+                elif not errors and not voices_installed(folder):
+                    self.status['message'] = 'Speech recognition ready. Avatar voices are not installed.'
                 if missing:
                     self.status['message'] = ('Speech models not found in:\n' + self.status['models_dir'] +
                         '\nSelect the correct folder or continue without speech models.\n'

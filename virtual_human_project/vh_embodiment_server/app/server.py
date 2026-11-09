@@ -27,7 +27,7 @@ from path_picker import select_path
 from model_warmup import ModelWarmup
 from project_paths import find_repository
 from typing import Literal
-from model_files import installed_whisper
+from model_files import installed_whisper, voices_installed
 from schemas import (AudioFile, AvatarState, CommandResult, GestureRequest, InputEvent,
                      MoodRequest, SpeakRequest, StatusResponse, TextInput, ViewRequest,
                      Settings, AgentReply, ChatResult, ExpressionRequest,
@@ -251,7 +251,7 @@ async def save_settings(request: Settings):
 
 async def render_reply(request: SpeakRequest, settings: Settings):
     validate_reply(request)
-    if not settings.speech_enabled or model_warmup.disabled:
+    if not settings.speech_enabled or model_warmup.disabled or not voices_installed(speech.models_path(settings)):
         return request.model_copy(update={'audio_url': None})
     if request.audio_url or not (request.speech_text or '').strip():
         return request
@@ -414,7 +414,8 @@ def warmup_status():
 
 @app.get('/api/models')
 def local_models():
-    return {'installed': installed_whisper(speech.models_path(get_settings()))}
+    folder = speech.models_path(get_settings())
+    return {'installed': installed_whisper(folder), 'voices': voices_installed(folder)}
 
 
 @app.get('/api/transcribe/device')

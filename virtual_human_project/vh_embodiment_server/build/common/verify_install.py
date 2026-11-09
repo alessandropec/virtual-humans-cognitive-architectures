@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 
 
-def verify(profile, models, model, voice_device=None, transcription_device=None):
+def verify(profile, models, model, voice_device=None, transcription_device=None, voices=True):
     from packaging.requirements import Requirement
     # Piper/Whisper declare onnxruntime (CPU) by distribution name. The GPU
     # distribution supplies the same API; never install both DLL sets together.
@@ -28,28 +28,31 @@ def verify(profile, models, model, voice_device=None, transcription_device=None)
     import speech
     from schemas import Settings
     import tts_device
-    settings = Settings(models_dir=str(models), stt_model=model if isinstance(model, str) else model[0],
+    model = [model] if isinstance(model, str) else list(model or [])
+    settings = Settings(models_dir=str(models), stt_model=model[0] if model else 'small',
                         stt_device=transcription_device or ('cuda' if profile == 'gpu' else 'cpu'),
                         tts_device=voice_device or ('cuda' if profile == 'gpu' else 'cpu'))
     with tempfile.TemporaryDirectory(prefix='vh-verify-') as temporary:
-        for character in ('julia', 'david'):
+        for character in (('julia', 'david') if voices else ()):
             settings.character = character
             for language, text in [('it', 'La voce è pronta.'), ('en', 'The voice is ready.')]:
                 settings.language = language
                 speech.synthesize(text, settings, Path(temporary))
                 print('Speech', character, language, tts_device.last_run, flush=True)
-        for selected in ([model] if isinstance(model, str) else model):
+        for selected in model:
             settings.stt_model = selected
             print('Transcription', selected, speech.prepare_preview(settings), flush=True)
-    print('Verification complete: dependencies, four voices and both Whisper models.', flush=True)
+    print('Verification complete: dependencies' + (', four voices' if voices else '')
+          + (f', Whisper {", ".join(model)}' if model else '') + '.', flush=True)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--profile', choices=['cpu', 'gpu'], required=True)
     parser.add_argument('--models', type=Path, required=True)
-    parser.add_argument('--model', nargs='+', required=True)
+    parser.add_argument('--model', nargs='*', default=[])
+    parser.add_argument('--no-voices', action='store_true')
     parser.add_argument('--voice-device', choices=['cpu', 'cuda'])
     parser.add_argument('--transcription-device', choices=['cpu', 'cuda'])
     args = parser.parse_args()
-    verify(args.profile, args.models, args.model, args.voice_device, args.transcription_device)
+    verify(args.profile, args.models, args.model, args.voice_device, args.transcription_device, not args.no_voices)
